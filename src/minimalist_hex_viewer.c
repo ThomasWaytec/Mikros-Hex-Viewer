@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAX_LINE_LENGTH 200
+#define MAX_LINE_LENGTH 184
 
 #define PERCENTAGE_SIGN_LENGTH 1
 #define SPACE_LENGTH 1
@@ -53,14 +53,17 @@ int main(void) {
     size_t header_length_per_line = COMPLETION_PERCENTAGE_LENGTH + SPACE_LENGTH + integer_length(file_size) + VERTICAL_LINE_LENGTH + SPACE_LENGTH;
     size_t payload_length_per_line = MAX_LINE_LENGTH - header_length_per_line;
 
-    size_t formatted_hex_values_per_line = (size_t)floor(((double)payload_length_per_line/(double)FORMATTED_HEX_VALUES_GROUP_LENGTH*(double)FORMATTED_HEX_VALUES_GROUP_SIZE) - SPACE_LENGTH);
     size_t formatted_hex_value_groups_per_line = (size_t)floor((double)payload_length_per_line/(double)FORMATTED_HEX_VALUES_GROUP_LENGTH);
+    size_t formatted_hex_values_per_line = (size_t)floor((double)formatted_hex_value_groups_per_line*(double)FORMATTED_HEX_VALUES_GROUP_SIZE);
+    
     size_t lines = (size_t)ceil((double)file_size/(double)formatted_hex_values_per_line);
 
-    /* set up stdout full buffering */
-    //char* stdout_buffer = calloc(sizeof(char), formatted_hex_values_per_line*FORMATTED_HEX_VALUE_LENGTH + header_length_per_line*lines);
-    //setvbuf(stdout, stdout_buffer, _IOFBF, file_size);
+    //printf("%u %u %u\n", payload_length_per_line, formatted_hex_value_groups_per_line, formatted_hex_values_per_line);
+    //exit(0);
 
+    /* set up stdout full buffering */
+    void* stdout_buffer = NULL;
+    setvbuf(stdout, stdout_buffer, _IOFBF, file_size);
 
     /* read and print content of file */
     unsigned int hex_value; // has to be int to be able to check for EOF
@@ -83,7 +86,7 @@ int main(void) {
     
     
     fclose(file);
-    
+
     
     return 0;   
 }
