@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <Windows.h>
+
 
 #define MAX_LINE_LENGTH 179
 
@@ -12,12 +14,18 @@
 #define COMPLETION_PERCENTAGE_LENGTH 4
 
 #define FORMATTED_HEX_VALUE_LENGTH (HEX_VALUE_LENGTH + SPACE_LENGTH)
-
 #define FORMATTED_HEX_VALUES_GROUP_SIZE 4
 #define FORMATTED_HEX_VALUES_GROUP_LENGTH (FORMATTED_HEX_VALUE_LENGTH*FORMATTED_HEX_VALUES_GROUP_SIZE + SPACE_LENGTH)
 
+#define HCONSOLE GetStdHandle(STD_OUTPUT_HANDLE)
 
-const char FILEPATH[] = "test_files\\tiff\\Picoawards.tiff";
+
+
+void fatal_error(const char* message)
+{
+    fprintf(stderr,"\nError: %s\n", message);
+    exit(EXIT_FAILURE);
+}
 
 size_t integer_length(size_t number) {
     if (number == 0) {return 1;}
@@ -36,12 +44,24 @@ void print_header(size_t line, size_t lines, size_t formatted_hex_values_per_lin
 
 }
 
-int main(void) {
 
 
+int main(int argc, char* argv[]) {
+
+
+    /* validate coommand-line arguments count */
+    if ((argc - 1) != 1) {
+        char* argc_buffer = calloc(sizeof(char), 54 + integer_length(argc) + 1);
+        sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
+        fatal_error(argc_buffer);
+    }
+    const char* FILEPATH = argv[1];
+
+    /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
+    if (file == NULL) {fatal_error("Cannot find or open file.");}
 
-    if (file == NULL) {printf("cant open file");}
+
 
     /* get file size */
     fseek(file, 0, SEEK_END);          
@@ -50,6 +70,8 @@ int main(void) {
 
 
 
+
+    /* calculations for formatting */
     size_t header_length_per_line = COMPLETION_PERCENTAGE_LENGTH + SPACE_LENGTH + integer_length(file_size) + VERTICAL_LINE_LENGTH + SPACE_LENGTH;
     size_t payload_length_per_line = MAX_LINE_LENGTH - header_length_per_line;
 
@@ -59,30 +81,36 @@ int main(void) {
     size_t lines = (size_t)ceil((double)file_size/(double)formatted_hex_values_per_line);
 
 
+
+
     /* set up stdout full buffering */
     void* stdout_buffer = NULL;
-    setvbuf(stdout, stdout_buffer, _IOFBF, file_size);
+    setvbuf(stdout, stdout_buffer, _IOFBF, (double)(header_length_per_line + payload_length_per_line)*(lines - 1));
+
+
+
+
 
     /* read and print content of file */
     unsigned int hex_value; // has to be int to be able to check for EOF
-    for (size_t line = 0; line < lines; line++) {
-        
+    for (size_t line = 0; line < lines; line++)
+    {
         print_header(line, lines, formatted_hex_values_per_line);
 
         for (size_t _ = 0; _ < formatted_hex_value_groups_per_line; _++)
         {
-            for (size_t _ = 0; _ < FORMATTED_HEX_VALUES_GROUP_SIZE && (hex_value = fgetc(file)) != EOF; _++)
+
+            for (size_t _ = 0; _ < FORMATTED_HEX_VALUES_GROUP_SIZE && (hex_value = fgetc(file)) != EOF; _++) 
             {
                 printf("%0*X ", HEX_VALUE_LENGTH, hex_value);
             }
             printf(" ");
             
-        }
-        
+        }       
         printf("\n");
     }
-    
-    
+
+
     fclose(file);
 
     
