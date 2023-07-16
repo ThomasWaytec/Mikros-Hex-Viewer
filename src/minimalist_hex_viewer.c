@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAX_LINE_LENGTH 184
+#define MAX_LINE_LENGTH 179
 
 #define PERCENTAGE_SIGN_LENGTH 1
 #define SPACE_LENGTH 1
@@ -17,7 +17,7 @@
 #define FORMATTED_HEX_VALUES_GROUP_LENGTH (FORMATTED_HEX_VALUE_LENGTH*FORMATTED_HEX_VALUES_GROUP_SIZE + SPACE_LENGTH)
 
 
-const char FILEPATH[] = "test_files\\jpeg\\test_1.jpg";
+const char FILEPATH[] = "test_files\\tiff\\Picoawards.tiff";
 
 size_t integer_length(size_t number) {
     if (number == 0) {return 1;}
@@ -55,11 +55,9 @@ int main(void) {
 
     size_t formatted_hex_value_groups_per_line = (size_t)floor((double)payload_length_per_line/(double)FORMATTED_HEX_VALUES_GROUP_LENGTH);
     size_t formatted_hex_values_per_line = (size_t)floor((double)formatted_hex_value_groups_per_line*(double)FORMATTED_HEX_VALUES_GROUP_SIZE);
-    
+
     size_t lines = (size_t)ceil((double)file_size/(double)formatted_hex_values_per_line);
 
-    //printf("%u %u %u\n", payload_length_per_line, formatted_hex_value_groups_per_line, formatted_hex_values_per_line);
-    //exit(0);
 
     /* set up stdout full buffering */
     void* stdout_buffer = NULL;
