@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 
-#define MAX_LINE_LENGTH 179
+#define MAX_LINE_LENGTH 160
 
 #define PERCENTAGE_SIGN_LENGTH 1
 #define SPACE_LENGTH 1
