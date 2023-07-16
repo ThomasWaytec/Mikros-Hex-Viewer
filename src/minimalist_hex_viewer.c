@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
     /* set up stdout full buffering */
     void* stdout_buffer = NULL;
-    setvbuf(stdout, stdout_buffer, _IOFBF, (double)(header_length_per_line + payload_length_per_line)*(lines - 1));
+    setvbuf(stdout, stdout_buffer, _IOFBF, MAX_LINE_LENGTH*(lines - 1));
 
 
 
