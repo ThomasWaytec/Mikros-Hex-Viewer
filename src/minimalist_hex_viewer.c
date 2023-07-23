@@ -54,8 +54,8 @@ int main(int argc, char* argv[]) {
         sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
         fatal_error(argc_buffer);
     }
-    const char* FILEPATH = argv[1];
 
+    const char* FILEPATH = argv[1];
     /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
     if (file == NULL) {fatal_error("Cannot find or open file.");}
