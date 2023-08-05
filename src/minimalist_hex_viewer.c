@@ -2,8 +2,36 @@
 #include <stdlib.h>
 #include <math.h>
 
+#ifdef _WIN32
+    #include <Windows.h>
+    
+    size_t get_terminal_width() {
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-#define MAX_LINE_LENGTH 160
+        GetConsoleScreenBufferInfo(hConsole, &csbi);
+        size_t terminal_width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+        return terminal_width;
+    }
+
+#endif
+
+#ifdef linux
+    #include <sys/ioctl.h>
+    #include <unistd.h>
+    
+    size_t get_terminal_width() {
+        struct winsize ws;
+        
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
+        size_t terminal_width = ws.ws_col;
+
+        return terminal_width;
+    }
+#endif
+
+#define MAX_LINE_LENGTH get_terminal_width()
 
 #define PERCENTAGE_SIGN_LENGTH 1
 #define SPACE_LENGTH 1
@@ -16,7 +44,7 @@
 #define FORMATTED_HEX_VALUES_GROUP_SIZE 4
 #define FORMATTED_HEX_VALUES_GROUP_LENGTH (FORMATTED_HEX_VALUE_LENGTH*FORMATTED_HEX_VALUES_GROUP_SIZE + SPACE_LENGTH)
 
-#define HCONSOLE GetStdHandle(STD_OUTPUT_HANDLE)
+
 
 
 
