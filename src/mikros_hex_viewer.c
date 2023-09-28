@@ -33,17 +33,17 @@
 
 #define MAX_LINE_LEN get_terminal_width()
 
-/* macros are defined as doubles for easier calculations further on */
+/* most macros are defined as doubles for easier calculations further on */
 #define PCT_SIGN_LEN 1.0        /* PCT = PERCENTAGE */
 #define SPACE_LEN 1.0
 #define VERTICAL_LINE_LEN 1.0
-#define RAW_HEX_LEN 2.0         /* max. possible length of a byte represented in hexadecimal */
+#define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */
                                 /* raw, as in they aren't formatted */
 #define RAW_HEX_PADDING 2.0     
 #define COMPLETION_PCT_LEN 4.0  /* PCT = PERCENTAGE*/
 
 #define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                               
-#define HEX_GROUP_SIZE 4.0                                           /* the number offormatted hex values in one group */
+#define HEX_GROUP_SIZE 4.0                                   /* the number offormatted hex values in one group */
 #define HEX_GROUP_LEN (HEX_LEN*HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
@@ -78,7 +78,7 @@ const size_t get_file_size(FILE* file) {
 }
 
 void print_header(size_t current_line, double lines, double hex_per_line) {
-        double completion_pct = (current_line + 1)/lines*100;
+        size_t completion_pct = (current_line + 1)/lines*100;
         size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
 
         size_t hex_printed = hex_per_line*(double)current_line;
@@ -125,24 +125,24 @@ int main(int argc, char* argv[]) {
 
     /* set up stdout full buffering */
     void* stdout_buffer = NULL;
-    setvbuf(stdout, stdout_buffer, _IOFBF, MAX_LINE_LENGTH*(lines - 1));
+    setvbuf(stdout, stdout_buffer, _IOFBF, MAX_LINE_LEN*(lines - 1));
 
 
 
 
 
     /* read and print content of file */
-    unsigned int hex_value; // has to be int to be able to check for EOF
+    unsigned int hex; // has to be int to be able to check for EOF
     for (size_t line = 0; line < lines; line++)
     {
-        print_header(line, lines, formatted_hex_values_per_line);
+        print_header(line, lines, hex_per_line);
 
-        for (size_t _ = 0; _ < formatted_hex_value_groups_per_line; _++)
+        for (size_t _ = 0; _ < hex_groups_per_line; _++)
         {
 
-            for (size_t _ = 0; _ < FORMATTED_HEX_VALUES_GROUP_SIZE && (hex_value = fgetc(file)) != EOF; _++) 
+            for (size_t _ = 0; _ < HEX_GROUP_SIZE && (hex = fgetc(file)) != EOF; _++) 
             {
-                printf("%0*X ", HEX_VALUE_LENGTH, hex_value);
+                printf("%0*X ", RAW_HEX_LEN, hex);
             }
             printf(" ");
             
