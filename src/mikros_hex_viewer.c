@@ -37,13 +37,14 @@
 #define PCT_SIGN_LEN 1.0        /* PCT = PERCENTAGE */
 #define SPACE_LEN 1.0
 #define VERTICAL_LINE_LEN 1.0
-#define HEX_LEN 2.0             /* max. possible length of a byte represented in hexadecimal */
-#define HEX_PADDING 2.0 
+#define RAW_HEX_LEN 2.0         /* max. possible length of a byte represented in hexadecimal */
+                                /* raw, as in they aren't formatted */
+#define RAW_HEX_PADDING 2.0     
 #define COMPLETION_PCT_LEN 4.0  /* PCT = PERCENTAGE*/
 
-#define FMT_HEX_LEN (HEX_LEN + SPACE_LEN)                               /* FMT = FORMATTED */
-#define FMT_HEX_GRUP_SIZE 4.0                                           /* the number offormatted hex values in one group */
-#define FMT_HEX_GROUP_LEN (FMT_HEX_LEN*FMT_HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
+#define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                               
+#define HEX_GROUP_SIZE 4.0                                           /* the number offormatted hex values in one group */
+#define HEX_GROUP_LEN (HEX_LEN*HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
 
@@ -61,6 +62,12 @@ size_t int_len(size_t number) {
     return floor(log10(abs(number))) + 1;
 }
 
+size_t doube_len(double number) {
+    if (number == 0) {return 1;}
+
+    return floor(log10(abs(number))) + 1;
+
+}
 const size_t get_file_size(FILE* file) {
 
     fseek(file, 0, SEEK_END);
@@ -70,15 +77,15 @@ const size_t get_file_size(FILE* file) {
     return FILE_SIZE;
 }
 
-void print_header(size_t line, size_t lines, size_t fmt_hex_per_line) {
-        size_t completion_pct = (size_t)(double)(line + 1)/(double)lines*100;
+void print_header(size_t current_line, double lines, double hex_per_line) {
+        double completion_pct = (current_line + 1)/lines*100;
         size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
 
-        size_t fmt_hex_printed = (size_t)(double)fmt_hex_per_line*(double)line;
-        size_t fmt_hex_printed_padding = int_len((double)fmt_hex_per_line*(double)(lines));
+        size_t hex_printed = hex_per_line*(double)current_line;
+        size_t hex_printed_padding = int_len(hex_per_line*lines);
 
 
-        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, fmt_hex_printed_padding, fmt_hex_printed);
+        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, hex_printed_padding, hex_printed);
 
 }
 
@@ -89,7 +96,7 @@ int main(int argc, char* argv[]) {
 
     /* validate coommand-line arguments count */
     if ((argc - 1) != 1) {
-        char* argc_buffer = calloc(sizeof(char), 54 + integer_length(argc) + 1);
+        char* argc_buffer = calloc(sizeof(char), 54 + int_len(argc) + 1);
         sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
         fatal_error(argc_buffer);
     }
@@ -104,15 +111,14 @@ int main(int argc, char* argv[]) {
     const size_t FILE_SIZE = get_file_size(file);
 
 
+    /* defined as double for easier calculations */
+    double header_len = COMPLETION_PCT_LEN + SPACE_LEN + int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
+    double payload_len = MAX_LINE_LEN - header_len;
+    
+    double hex_groups_per_line = floor(payload_len/HEX_GROUP_LEN);
+    double hex_per_line = floor(hex_groups_per_line*HEX_GROUP_SIZE);
 
-    /* calculations for formatting */
-    size_t header_length_per_line = COMPLETION_PERCENTAGE_LENGTH + SPACE_LENGTH + integer_length(file_size) + VERTICAL_LINE_LENGTH + SPACE_LENGTH;
-    size_t payload_length_per_line = MAX_LINE_LENGTH - header_length_per_line;
-
-    size_t formatted_hex_value_groups_per_line = (size_t)floor((double)payload_length_per_line/(double)FORMATTED_HEX_VALUES_GROUP_LENGTH);
-    size_t formatted_hex_values_per_line = (size_t)floor((double)formatted_hex_value_groups_per_line*(double)FORMATTED_HEX_VALUES_GROUP_SIZE);
-
-    size_t lines = (size_t)ceil((double)file_size/(double)formatted_hex_values_per_line);
+    size_t lines = (size_t)ceil((double)FILE_SIZE/hex_per_line);
 
 
 
