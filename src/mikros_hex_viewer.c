@@ -61,6 +61,15 @@ size_t int_len(size_t number) {
     return floor(log10(abs(number))) + 1;
 }
 
+const size_t get_file_size(FILE* file) {
+
+    fseek(file, 0, SEEK_END);
+    const size_t FILE_SIZE = ftell(file);            
+    fseek(file, 0, SEEK_SET);
+
+    return FILE_SIZE;
+}
+
 void print_header(size_t line, size_t lines, size_t fmt_hex_per_line) {
         size_t completion_pct = (size_t)(double)(line + 1)/(double)lines*100;
         size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
@@ -92,11 +101,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    /* get file size */
-    fseek(file, 0, SEEK_END);          
-    size_t file_size = ftell(file);            
-    rewind(file);
-
+    const size_t FILE_SIZE = get_file_size(file);
 
 
 
