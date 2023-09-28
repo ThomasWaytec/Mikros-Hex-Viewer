@@ -31,18 +31,19 @@
     }
 #endif
 
-#define MAX_LINE_LENGTH get_terminal_width()
+#define MAX_LINE_LEN get_terminal_width()
 
-#define PERCENTAGE_SIGN_LENGTH 1
-#define SPACE_LENGTH 1
-#define VERTICAL_LINE_LENGTH 1
-#define HEX_VALUE_LENGTH 2
-#define HEX_VALUE_PADDING 2
-#define COMPLETION_PERCENTAGE_LENGTH 4
+/* macros are defined as doubles for easier calculations further on */
+#define PCT_SIGN_LEN 1.0        /* PCT = PERCENTAGE */
+#define SPACE_LEN 1.0
+#define VERTICAL_LINE_LEN 1.0
+#define HEX_LEN 2.0             /* max. possible length of a byte represented in hexadecimal */
+#define HEX_PADDING 2.0 
+#define COMPLETION_PCT_LEN 4.0  /* PCT = PERCENTAGE*/
 
-#define FORMATTED_HEX_VALUE_LENGTH (HEX_VALUE_LENGTH + SPACE_LENGTH)
-#define FORMATTED_HEX_VALUES_GROUP_SIZE 4
-#define FORMATTED_HEX_VALUES_GROUP_LENGTH (FORMATTED_HEX_VALUE_LENGTH*FORMATTED_HEX_VALUES_GROUP_SIZE + SPACE_LENGTH)
+#define FMT_HEX_LEN (HEX_LEN + SPACE_LEN)                               /* FMT = FORMATTED */
+#define FMT_HEX_GRUP_SIZE 4.0                                           /* the number offormatted hex values in one group */
+#define FMT_HEX_GROUP_LEN (FMT_HEX_LEN*FMT_HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
 
@@ -54,20 +55,21 @@ void fatal_error(const char* message)
     exit(EXIT_FAILURE);
 }
 
-size_t integer_length(size_t number) {
+size_t int_len(size_t number) {
     if (number == 0) {return 1;}
 
     return floor(log10(abs(number))) + 1;
 }
 
-void print_header(size_t line, size_t lines, size_t formatted_hex_values_per_line) {
-        size_t completion_percentage = (size_t)(double)(line + 1)/(double)lines*100;
-        size_t completion_percentage_padding = COMPLETION_PERCENTAGE_LENGTH - PERCENTAGE_SIGN_LENGTH;
+void print_header(size_t line, size_t lines, size_t fmt_hex_per_line) {
+        size_t completion_pct = (size_t)(double)(line + 1)/(double)lines*100;
+        size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
 
-        size_t no_of_formatted_hex_values_printed = (size_t)(double)formatted_hex_values_per_line*(double)line;
-        size_t no_of_formatted_hex_values_printed_padding = integer_length((double)formatted_hex_values_per_line*(double)(lines));
+        size_t fmt_hex_printed = (size_t)(double)fmt_hex_per_line*(double)line;
+        size_t fmt_hex_printed_padding = int_len((double)fmt_hex_per_line*(double)(lines));
 
-        printf("%0*u%% %0*u| ", completion_percentage_padding, completion_percentage, no_of_formatted_hex_values_printed_padding, no_of_formatted_hex_values_printed);
+
+        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, fmt_hex_printed_padding, fmt_hex_printed);
 
 }
 
