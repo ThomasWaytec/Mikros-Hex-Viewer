@@ -36,6 +36,7 @@
 /* most macros are defined as doubles for easier calculations further on */
 #define PCT_SIGN_LEN 1.0        /* PCT = PERCENTAGE */
 #define SPACE_LEN 1.0
+#define NEW_LINE_LEN 1.0
 #define VERTICAL_LINE_LEN 1.0
 #define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */
                                 /* raw, as in they aren't formatted */
@@ -43,7 +44,7 @@
 #define COMPLETION_PCT_LEN 4.0  /* PCT = PERCENTAGE*/
 
 #define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                               
-#define HEX_GROUP_SIZE 4.0                                   /* the number offormatted hex values in one group */
+#define HEX_GROUP_SIZE 4.0                                  /* the number offormatted hex values in one group */
 #define HEX_GROUP_LEN (HEX_LEN*HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
@@ -115,7 +116,7 @@ int main(int argc, char* argv[]) {
     double header_len = COMPLETION_PCT_LEN + SPACE_LEN + int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
     double payload_len = MAX_LINE_LEN - header_len;
     
-    double hex_groups_per_line = floor(payload_len/HEX_GROUP_LEN);
+    double hex_groups_per_line = floor((payload_len - NEW_LINE_LEN)/HEX_GROUP_LEN);
     double hex_per_line = floor(hex_groups_per_line*HEX_GROUP_SIZE);
 
     size_t lines = (size_t)ceil((double)FILE_SIZE/hex_per_line);
@@ -125,7 +126,7 @@ int main(int argc, char* argv[]) {
 
     /* set up stdout full buffering */
     void* stdout_buffer = NULL;
-    setvbuf(stdout, stdout_buffer, _IOFBF, MAX_LINE_LEN*(lines - 1));
+    setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
 
 
 
@@ -152,7 +153,5 @@ int main(int argc, char* argv[]) {
 
 
     fclose(file);
-
-    
     return 0;   
 }
