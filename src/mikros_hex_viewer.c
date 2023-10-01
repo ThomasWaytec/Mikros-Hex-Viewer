@@ -35,13 +35,14 @@
 
 /* most macros are defined as doubles for easier calculations further on */
 #define PCT_SIGN_LEN 1.0        /* PCT = PERCENTAGE */
+#define COMPLETION_PCT_LEN (3.0 + PCT_SIGN_LEN)
+
 #define SPACE_LEN 1.0
 #define NEW_LINE_LEN 1.0
 #define VERTICAL_LINE_LEN 1.0
-#define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */
-                                /* raw, as in they aren't formatted */
-#define RAW_HEX_PADDING 2.0     
-#define COMPLETION_PCT_LEN 4.0  /* PCT = PERCENTAGE*/
+
+#define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */                                
+#define RAW_HEX_PADDING 2.0     /* raw, as in they aren't formatted */
 
 #define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                               
 #define HEX_GROUP_SIZE 4.0                                  /* the number offormatted hex values in one group */
