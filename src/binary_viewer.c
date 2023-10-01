@@ -31,21 +31,24 @@
     }
 #endif
 
-#define BYTE 8
+#define MAX_LINE_LEN get_terminal_width()
 
-#define MAX_LINE_LENGTH get_terminal_width()
+/* most macros are defined as doubles for easier calculations further on */
+#define PCT_SIGN_LEN 1.0    /* PCT = PERCENTAGE */
+#define COMPLETION_PCT_LEN (3.0 + PCT_SIGN_LEN)
 
-#define PERCENTAGE_SIGN_LENGTH 1
-#define SPACE_LENGTH 1
-#define VERTICAL_LINE_LENGTH 1
-#define HEX_VALUE_LENGTH 2 /* max. possible length of a byte represented in hexadecimal */
-#define DECIMAL_VALUE_LENGTH 3 /* max. possible length of a byte represented in decimal */
-#define HEX_VALUE_PADDING 2
-#define COMPLETION_PERCENTAGE_LENGTH 4
+#define SPACE_LEN 1.0
+#define NEW_LINE_LEN 1.0
+#define VERTICAL_LINE_LEN 1.0
 
-#define FORMATTED_HEX_VALUE_LENGTH (HEX_VALUE_LENGTH + SPACE_LENGTH)
-#define FORMATTED_HEX_VALUES_GROUP_SIZE 4
-#define FORMATTED_HEX_VALUES_GROUP_LENGTH (FORMATTED_HEX_VALUE_LENGTH*FORMATTED_HEX_VALUES_GROUP_SIZE + SPACE_LENGTH)
+#define RAW_BIN_LEN 8   /* max. possible length of a byte represented in binary */                                
+                        /* raw, as in they aren't formatted */
+
+#define BIN_LEN (RAW_BIN_LEN + SPACE_LEN)                               
+#define BIN_GROUP_SIZE 1.0                                  /* the number offormatted hex values in one group */
+#define BIN_GROUP_LEN (BIN_LEN*BIN_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
+
+
 
 
 
@@ -55,42 +58,44 @@ void fatal_error(const char* message)
     exit(EXIT_FAILURE);
 }
 
-size_t integer_length(size_t number) {
+size_t int_len(size_t number) {
     if (number == 0) {return 1;}
 
     return floor(log10(abs(number))) + 1;
 }
 
+size_t doube_len(double number) {
+    if (number == 0) {return 1;}
 
-void print_binary(unsigned int value) {
-    printf("0b"); /* print binary prefix */
+    return floor(log10(abs(number))) + 1;
 
-    for (size_t i = BYTE - 1; i + 1; i--) {
+}
+
+void print_raw_binary(unsigned int value) {
+    for (size_t i = RAW_BIN_LEN - 1; i + 1; i--) {
         printf("%d", (value & (1 << i)) > 0);
     }
-
-}
-
-void print_hex(unsigned int value) {
-    printf("0x"); /* print hex prefix */
-    
-    printf("%0*X", HEX_VALUE_LENGTH, value);
 }
 
 
-void print_decimal(unsigned int value) {
-    printf("0d"); /* print decimal prefix */
+const size_t get_file_size(FILE* file) {
 
-    printf("%0*d", DECIMAL_VALUE_LENGTH, value);
+    fseek(file, 0, SEEK_END);
+    const size_t FILE_SIZE = ftell(file);            
+    fseek(file, 0, SEEK_SET);
+
+    return FILE_SIZE;
 }
 
-void print_header(const size_t FILE_SIZE, size_t hex_values_printed) {
-        size_t completion_percentage = (size_t)(double)(hex_values_printed + 1)/(double)FILE_SIZE*100;
-        size_t completion_percentage_padding = COMPLETION_PERCENTAGE_LENGTH - PERCENTAGE_SIGN_LENGTH;
+void print_header(size_t current_line, double lines, double bin_per_line) {
+        size_t completion_pct = (current_line + 1)/lines*100;
+        size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
 
-        size_t hex_values_printed_padding = integer_length(FILE_SIZE);
+        size_t bin_printed = bin_per_line*(double)current_line;
+        size_t bin_printed_padding = int_len(bin_per_line*lines);
 
-        printf("%0*u%% %0*u| ", completion_percentage_padding, completion_percentage, hex_values_printed_padding, hex_values_printed);
+
+        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, bin_printed_padding, bin_printed);
 
 }
 
@@ -100,84 +105,62 @@ int main(int argc, char* argv[]) {
 
 
     /* validate coommand-line arguments count */
-    /*
     if ((argc - 1) != 1) {
-        char* argc_buffer = calloc(sizeof(char), 54 + integer_length(argc) + 1);
+        char* argc_buffer = calloc(sizeof(char), 54 + int_len(argc) + 1);
         sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
         fatal_error(argc_buffer);
     }
-    */
 
-    const char* FILEPATH = "test_files/jpeg/test_3.jpg";
-    //const char* FILEPATH = argv[1];
+    const char* FILEPATH = argv[1];
     /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
-    //if (file == NULL) {fatal_error("Cannot find or open file.");}
+    if (file == NULL) {fatal_error("Cannot find or open file.");}
 
 
 
-    /* get file size */
-    fseek(file, 0, SEEK_END);          
-    const size_t FILE_SIZE = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    const size_t FILE_SIZE = get_file_size(file);
+
+
+    /* defined as double for easier calculations */
+    double header_len = COMPLETION_PCT_LEN + SPACE_LEN + int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
+    double payload_len = MAX_LINE_LEN - header_len;
     
+    double bin_groups_per_line = floor((payload_len - NEW_LINE_LEN)/BIN_GROUP_LEN);
+    double bin_per_line = floor(bin_groups_per_line*BIN_GROUP_SIZE);
 
-
-
-    /* calculations for formatting */
-    size_t header_length_per_line = COMPLETION_PERCENTAGE_LENGTH + SPACE_LENGTH + integer_length(FILE_SIZE) + VERTICAL_LINE_LENGTH + SPACE_LENGTH;
-    size_t payload_length_per_line = MAX_LINE_LENGTH - header_length_per_line;
-
-    size_t formatted_hex_value_groups_per_line = (size_t)floor((double)payload_length_per_line/(double)FORMATTED_HEX_VALUES_GROUP_LENGTH);
-    size_t formatted_hex_values_per_line = (size_t)floor((double)formatted_hex_value_groups_per_line*(double)FORMATTED_HEX_VALUES_GROUP_SIZE);
-
-    size_t lines = (size_t)ceil((double)FILE_SIZE/(double)formatted_hex_values_per_line);
+    size_t lines = (size_t)ceil((double)FILE_SIZE/bin_per_line);
 
 
 
 
     /* set up stdout full buffering */
-    //void* stdout_buffer = NULL;
-    //setvbuf(stdout, stdout_buffer, _IOFBF, MAX_LINE_LENGTH*(lines - 1));
+    void* stdout_buffer = NULL;
+    setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
 
 
 
 
-    /*
-    unsigned int hex_value; // has to be int to be able to check for EOF
+
+    /* read and print content of file */
+    unsigned int bin; // has to be int to be able to check for EOF
     for (size_t line = 0; line < lines; line++)
     {
-        print_header(line, lines, formatted_hex_values_per_line);
+        print_header(line, lines, bin_per_line);
 
-        for (size_t _ = 0; _ < formatted_hex_value_groups_per_line; _++)
+        for (size_t _ = 0; _ < bin_groups_per_line; _++)
         {
 
-            for (size_t _ = 0; _ < FORMATTED_HEX_VALUES_GROUP_SIZE && (hex_value = fgetc(file)) != EOF; _++) 
+            for (size_t _ = 0; _ < BIN_GROUP_SIZE && (bin = fgetc(file)) != EOF; _++) 
             {
-                printf("%0*X ", HEX_VALUE_LENGTH, hex_value);
+                print_raw_binary(bin);
+                printf(" ");
             }
             printf(" ");
             
         }       
         printf("\n");
     }
-    */
 
-
-
-    size_t hex_values_printed = 0;
-    unsigned int hex_value;
-    while ((hex_value = fgetc(file)) != EOF) {
-        print_header(FILE_SIZE, hex_values_printed);
-        print_binary(hex_value);
-        printf("\n");
-        print_hex(hex_value);
-        printf("   ");
-        print_decimal(hex_value);
-        printf("\n");
-
-        hex_values_printed++;
-    }
-    
+    fclose(file);
     return 0;   
-}   
+}
