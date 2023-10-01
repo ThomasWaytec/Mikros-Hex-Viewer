@@ -41,8 +41,8 @@
 #define NEW_LINE_LEN 1.0
 #define VERTICAL_LINE_LEN 1.0
 
-#define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */                                
-#define RAW_HEX_PADDING 2.0     /* raw, as in they aren't formatted */
+#define RAW_HEX_LEN 2   /* max. possible length of a byte represented in hexadecimal */
+                        /* raw, as in it isn't formatted */
 
 #define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                               
 #define HEX_GROUP_SIZE 4.0                                  /* the number offormatted hex values in one group */
