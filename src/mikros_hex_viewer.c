@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "char_lengths.h"
+#include "data_units.h"
+
 #ifdef _WIN32
     #include <Windows.h>
     
@@ -44,11 +47,15 @@
 #define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */                                
 #define RAW_HEX_PADDING 2.0     /* raw, as in it isn't formatted */
 
-#define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                               
-#define HEX_GROUP_SIZE 4.0                                  /* the number offormatted hex values in one group */
+#define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                   /* th*/            
+#define HEX_GROUP_SIZE 4.0                                  /* the number of formatted hex values in one group */
 #define HEX_GROUP_LEN (HEX_LEN*HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
+/* from data_units.c */
+extern DataUnit bin;
+extern DataUnit hex;
+extern DataUnit dec;
 
 
 
@@ -92,8 +99,14 @@ void print_header(size_t current_line, double lines, double hex_per_line) {
 }
 
 
-
 int main(int argc, char* argv[]) {
+
+    printf("%d\n", bin.raw_unit_len);
+    printf("%f\n", bin.unit_len);
+    printf("%f\n", bin.unit_group_len);
+    
+    
+    exit(0);
 
 
     /* validate coommand-line arguments count */
