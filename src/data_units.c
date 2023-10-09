@@ -8,12 +8,12 @@ int main(void)
 {
     /* binary */
     extern DataUnit bin;
-    binary.raw_unit_len = 8;
-    binary.raw_unit_padding = 8.0;
+    bin.raw_unit_len = 8;
+    bin.raw_unit_padding = 8.0;
 
-    binary.unit_len = binary.raw_unit_len + SPACE_LEN;
-    binary.unit_group_size = 1.0;
-    binary.unit_group_len = binary.unit_len*binary.unit_group_size + SPACE_LEN;
+    bin.unit_len = bin.raw_unit_len + SPACE_LEN;
+    bin.unit_group_size = 1.0;
+    bin.unit_group_len = bin.unit_len*bin.unit_group_size + SPACE_LEN;
 
 
     /* hexadecimal */
