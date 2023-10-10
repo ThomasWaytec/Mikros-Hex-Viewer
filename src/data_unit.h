@@ -12,11 +12,12 @@ The struct members are defined as double to facilitate calculations,
 but they are intended to store whole numbers.
 */
 typedef struct data_unit {
-    double len;
 
-    double group_len;       /**/
-    double group_size;      /* the combined group_size of all data formats*/
-    char data_formats[8];   /* the type of data formats the data unit is made of */
+    char data_formats[8];   /* the type of data formats the data unit is made up of */
+    double len;             /* the sum of all the data formats' lengths in .data_formats */
+
+    double group_size;      /* the number data units in one data unit group */
+    double group_len;       /* how many characters a data unit group takes up in total */
 
 
 } data_unit_t;
