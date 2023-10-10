@@ -36,17 +36,16 @@ data_format_t dec = {
     .group_len = 4.0*3.0 + SPACE_LEN    /* .len*.group_size + SPACE_LEN */ 
 };
 
-
-void print_hex(unsigned int byte, data_format_t* hex) {
-    printf("%0*X ", hex->raw_padding, hex);
+void print_hex(unsigned int byte) {
+    printf("%0*X ", hex.raw_padding, hex);
 }
 
-void print_bin(unsigned int byte, data_format_t* bin) {
-    for (size_t i = bin->raw_padding - 1; i + 1; i--) {
+void print_bin(unsigned int byte) {
+    for (size_t i = bin.raw_padding - 1; i + 1; i--) {
         printf("%d ", (byte & (1 << i)) > 0);
     }
 }
 
-void print_dec(unsigned int byte, data_format_t* dec) {
-    printf("%0*d ", dec->raw_padding, byte);
+void print_dec(unsigned int byte) {
+    printf("%0*d ", dec.raw_padding, byte);
 }
