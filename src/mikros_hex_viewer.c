@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "char_lengths.h"
-#include "data_units.h"
+#include "data_formats.h"
 
 #ifdef _WIN32
     #include <Windows.h>
@@ -53,9 +53,9 @@
 
 
 /* from data_units.c */
-extern DataUnit bin;
-extern DataUnit hex;
-extern DataUnit dec;
+extern DataFormat bin;
+extern DataFormat hex;
+extern DataFormat dec;
 
 
 
@@ -101,9 +101,9 @@ void print_header(size_t current_line, double lines, double hex_per_line) {
 
 int main(int argc, char* argv[]) {
 
-    printf("%d\n", bin.raw_unit_len);
-    printf("%f\n", bin.unit_len);
-    printf("%f\n", bin.unit_group_len);
+    printf("%d\n", bin.raw_len);
+    printf("%f\n", bin.len);
+    printf("%f\n", bin.group_len);
     
     
     exit(0);
