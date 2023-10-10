@@ -22,4 +22,10 @@ typedef struct data_format
 
 } data_format_t;
 
+
+void print_hex(unsigned int byte, data_format_t* hex);
+void print_bin(unsigned int byte, data_format_t* bin);
+void print_dec(unsigned int byte, data_format_t* dec);
+
+
 #endif
