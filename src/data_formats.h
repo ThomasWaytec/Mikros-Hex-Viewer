@@ -3,6 +3,10 @@
 
 #include <stdlib.h>
 
+#define HEXADECIMAL 'h'
+#define BINARY 'b'
+#define DECIMAL 'd'
+
 /* 
 Most struct members are defined as double to facilitate calculations,
 but they are intended to store whole numbers.

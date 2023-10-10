@@ -3,7 +3,7 @@
 #include "char_lengths.h"
 #include "data_formats.h"
 
-const char SUPPORTED_DATA_FORMATS[] = {'h', 'b', 'd'};
+const char SUPPORTED_DATA_FORMATS[] = {HEXADECIMAL, BINARY, DECIMAL};
 
 /* hexadecimal */
 data_format_t hex = {
