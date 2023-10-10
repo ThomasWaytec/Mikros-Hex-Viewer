@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "char_lengths.h"
-#include "data_formats.h"
-
 #ifdef _WIN32
     #include <Windows.h>
     
@@ -34,22 +31,15 @@
     }
 #endif
 
+#include "char_lengths.h"
+#include "data_formats.h"
+#include "data_unit.h"
+
+
 #define MAX_LINE_LEN get_terminal_width()
 
-/* most macros are defined as doubles for easier calculations further on */
-#define PCT_SIGN_LEN 1.0        /* PCT = PERCENTAGE */
+#define PCT_SIGN_LEN 1.0   /* PCT = PERCENTAGE */
 #define COMPLETION_PCT_LEN (3.0 + PCT_SIGN_LEN)
-
-#define SPACE_LEN 1.0
-#define NEW_LINE_LEN 1.0
-#define VERTICAL_LINE_LEN 1.0
-
-#define RAW_HEX_LEN 2           /* max. possible length of a byte represented in hexadecimal */                                
-#define RAW_HEX_PADDING 2.0     /* raw, as in it isn't formatted */
-
-#define HEX_LEN (RAW_HEX_LEN + SPACE_LEN)                   /* th*/            
-#define HEX_GROUP_SIZE 4.0                                  /* the number of formatted hex values in one group */
-#define HEX_GROUP_LEN (HEX_LEN*HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
 /* from data_formats.c */
@@ -76,7 +66,64 @@ size_t doube_len(double number) {
 
     return floor(log10(abs(number))) + 1;
 
+
 }
+
+
+void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[], const size_t DATA_FORMATS_LEN) {
+    for (size_t i = 0; i < DATA_FORMATS_LEN; i++)
+    {
+
+        
+        switch (DATA_FORMATS[i])
+        {
+
+            case HEXADECIMAL:
+                data_unit->data_formats[i] = HEXADECIMAL;
+                data_unit->len += hex.len;
+                break;
+
+            
+            case BINARY:        
+                data_unit->data_formats[i] = BINARY;
+                data_unit->len += bin.len;
+                break;
+
+            case DECIMAL:
+                data_unit->data_formats[i] = DECIMAL;
+                data_unit->len += dec.len;
+                break;
+        }
+
+    }
+
+    /* determine the appropriate group size */
+    if (DATA_FORMATS_LEN > 1) {data_unit->group_size = 1;}
+    else {
+        if (data_unit->len <= 3)
+        {
+            data_unit->group_size = 4;
+        }
+        else if (data_unit->len == 4) {
+            data_unit->group_size = 3;
+        }
+        else if (data_unit->len > 4 && data_unit->len < 8) {
+            data_unit->group_size = 2;
+        }
+        else {
+            data_unit->group_size = 1;
+        }
+
+    }
+
+    /* calculate group len */
+    data_unit->group_len = data_unit->len*data_unit->group_size + SPACE_LEN;
+    
+
+
+}
+    
+
 const size_t get_file_size(FILE* file) {
 
     fseek(file, 0, SEEK_END);
@@ -101,23 +148,32 @@ void print_header(size_t current_line, double lines, double hex_per_line) {
 
 int main(int argc, char* argv[]) {
 
-    printf("%d\n", bin.raw_len);
-    printf("%f\n", bin.len);
-    printf("%f\n", bin.group_len);
-    printf("%c\n", SUPPORTED_DATA_FORMATS[0]);
+    const char SELECTED_DATA_FORMATS[] = {HEXADECIMAL};
+    const size_t SELECTED_DATA_FORMATS_LEN = 1;
     
+
+    data_unit_t* pData_unit = malloc(sizeof(data_unit_t));
+    initialize_data_unit(pData_unit, SELECTED_DATA_FORMATS, SELECTED_DATA_FORMATS_LEN);
+    data_unit_t data_unit = *pData_unit;
+    printf("%c\n", data_unit.data_formats[0]);
+    printf("%f\n", data_unit.len);
+    printf("%f\n", data_unit.group_size);
+    printf("%f\n", data_unit.group_len);
+
+    
+
     exit(0);
-
-
-    /* validate coommand-line arguments count */
+    /*
+    validate coommand-line arguments count
     if ((argc - 1) != 1) {
         char* argc_buffer = calloc(sizeof(char), 54 + int_len(argc) + 1);
         sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
         fatal_error(argc_buffer);
     }
-
     const char* FILEPATH = argv[1];
-    /* try to open file */
+
+    const char FILEPATH[] = "test_files/jpeg/test_1.jpg";
+    try to open file 
     FILE* file = fopen(FILEPATH, "rb");
     if (file == NULL) {fatal_error("Cannot find or open file.");}
 
@@ -126,19 +182,19 @@ int main(int argc, char* argv[]) {
     const size_t FILE_SIZE = get_file_size(file);
 
 
-    /* defined as double for easier calculations */
+    defined as double for easier calculations 
     double header_len = COMPLETION_PCT_LEN + SPACE_LEN + int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
     double payload_len = MAX_LINE_LEN - header_len;
     
-    double hex_groups_per_line = floor((payload_len - NEW_LINE_LEN)/HEX_GROUP_LEN);
-    double hex_per_line = floor(hex_groups_per_line*HEX_GROUP_SIZE);
+    double unit_groups_per_line = floor((payload_len - NEW_LINE_LEN)/UNIT_GROUP_LEN);
+    double unit_per_line = floor(unit_groups_per_line*UNIT_GROUP_SIZE);
 
-    size_t lines = (size_t)ceil((double)FILE_SIZE/hex_per_line);
-
-
+    size_t lines = (size_t)ceil((double)FILE_SIZE/unit_per_line);
 
 
-    /* set up stdout full buffering */
+
+
+    set up stdout full buffering 
     void* stdout_buffer = NULL;
     setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
 
@@ -146,7 +202,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    /* read and print content of file */
+    read and print content of file 
     unsigned int hex; // has to be int to be able to check for EOF
     for (size_t line = 0; line < lines; line++)
     {
@@ -167,5 +223,6 @@ int main(int argc, char* argv[]) {
 
 
     fclose(file);
+    */
     return 0;   
 }
