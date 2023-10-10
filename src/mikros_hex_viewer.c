@@ -56,7 +56,7 @@
 extern DataFormat bin;
 extern DataFormat hex;
 extern DataFormat dec;
-
+extern char SUPPORTED_DATA_FORMATS[];
 
 
 void fatal_error(const char* message)
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     printf("%d\n", bin.raw_len);
     printf("%f\n", bin.len);
     printf("%f\n", bin.group_len);
-    printf("%d\n", )    
+    printf("%c\n", SUPPORTED_DATA_FORMATS[0]);
     
     exit(0);
 
