@@ -52,7 +52,7 @@
 #define HEX_GROUP_LEN (HEX_LEN*HEX_GROUP_SIZE + SPACE_LEN)  /* how many characters a formatted hex group takes up */
 
 
-/* from data_units.c */
+/* from data_formats.c */
 extern DataFormat bin;
 extern DataFormat hex;
 extern DataFormat dec;
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     printf("%d\n", bin.raw_len);
     printf("%f\n", bin.len);
     printf("%f\n", bin.group_len);
-    
+    printf("%d\n", )    
     
     exit(0);
 
