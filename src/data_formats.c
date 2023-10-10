@@ -6,7 +6,7 @@
 const char SUPPORTED_DATA_FORMATS[] = {'h', 'b', 'd'};
 
 /* hexadecimal */
-DataFormat hex = {
+data_format_t hex = {
     .raw_len = 2,
     .raw_padding = 2,
 
@@ -16,7 +16,7 @@ DataFormat hex = {
 };
 
 /* binary */
-DataFormat bin = {
+data_format_t bin = {
     .raw_len = 8,
     .raw_padding = 8,
 
@@ -26,7 +26,7 @@ DataFormat bin = {
 };
 
 /* decimal */
-DataFormat dec = {
+data_format_t dec = {
     .raw_len = 3,
     .raw_padding = 3,
 

@@ -53,9 +53,9 @@
 
 
 /* from data_formats.c */
-extern DataFormat bin;
-extern DataFormat hex;
-extern DataFormat dec;
+extern data_format_t bin;
+extern data_format_t hex;
+extern data_format_t dec;
 extern char SUPPORTED_DATA_FORMATS[];
 
 

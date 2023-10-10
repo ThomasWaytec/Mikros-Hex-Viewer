@@ -16,6 +16,6 @@ typedef struct data_format
     double group_size;     /* the number of styled data formats in one group */
     double group_len;      /* how many characters a styled data format group takes up in total */
 
-} DataFormat;
+} data_format_t;
 
 #endif
