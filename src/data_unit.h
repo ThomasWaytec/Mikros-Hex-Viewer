@@ -1,5 +1,5 @@
 #ifndef DATA_UNIT_H
-#define DATA_UNIT_h
+#define DATA_UNIT_H
 
 /*
 A data unit (data_unit_t) is a composite of one or many data formats (data_format_t).
