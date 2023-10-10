@@ -43,11 +43,11 @@
 
 
 /* from data_formats.c */
+extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
 extern data_format_t hex;
 extern data_format_t dec;
-extern char SUPPORTED_DATA_FORMATS[];
-
+extern print_hex;
 
 void fatal_error(const char* message)
 {
@@ -70,7 +70,7 @@ size_t doube_len(double number) {
 }
 
 
-void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[], const size_t DATA_FORMATS_LEN) {
+void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[]) {
     for (size_t i = 0; i < DATA_FORMATS_LEN; i++)
     {
 
@@ -92,6 +92,9 @@ void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[], con
             case DECIMAL:
                 data_unit->data_formats[i] = DECIMAL;
                 data_unit->len += dec.len;
+                break;
+
+            default:
                 break;
         }
 
@@ -123,6 +126,30 @@ void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[], con
 
 }
     
+void print_data_unit(data_unit_t* data_unit, size_t byte) {
+
+    /* call the appropriate print function for the different data formats */
+    for (size_t i = 0; i < DATA_FORMATS_LEN; i++)
+    {   
+        switch (data_unit->data_formats[i]) {
+
+            case HEXADECIMAL:
+                print_hex(byte);
+                break;
+
+                
+            case BINARY:
+                print_bin(byte);
+                break;
+
+            case DECIMAL:
+                print_dec(byte);
+                break;
+        }
+   }
+    
+
+}
 
 const size_t get_file_size(FILE* file) {
 
@@ -148,21 +175,18 @@ void print_header(size_t current_line, double lines, double hex_per_line) {
 
 int main(int argc, char* argv[]) {
 
-    const char SELECTED_DATA_FORMATS[] = {HEXADECIMAL};
-    const size_t SELECTED_DATA_FORMATS_LEN = 1;
+    const char SELECTED_DATA_FORMATS[] = {BINARY, HEXADECIMAL};
+    const size_t SELECTED_DATA_FORMATS_LEN = 3;
+    
+    data_unit_t data_unit;
+    initialize_data_unit(&data_unit, SELECTED_DATA_FORMATS, SELECTED_DATA_FORMATS_LEN);
+    printf("data_format[0]=%c\n", data_unit.data_formats[0]);
+    printf("data_unit.len=%f\n", data_unit.len);
+    printf("data_unit.group_size=%f\n", data_unit.group_size);
+    printf("data_unit.group_len=%f\n", data_unit.group_len);
+
     
 
-    data_unit_t* pData_unit = malloc(sizeof(data_unit_t));
-    initialize_data_unit(pData_unit, SELECTED_DATA_FORMATS, SELECTED_DATA_FORMATS_LEN);
-    data_unit_t data_unit = *pData_unit;
-    printf("%c\n", data_unit.data_formats[0]);
-    printf("%f\n", data_unit.len);
-    printf("%f\n", data_unit.group_size);
-    printf("%f\n", data_unit.group_len);
-
-    
-
-    exit(0);
     /*
     validate coommand-line arguments count
     if ((argc - 1) != 1) {
@@ -171,9 +195,10 @@ int main(int argc, char* argv[]) {
         fatal_error(argc_buffer);
     }
     const char* FILEPATH = argv[1];
+    */
 
-    const char FILEPATH[] = "test_files/jpeg/test_1.jpg";
-    try to open file 
+    const char FILEPATH[] = "test_files/jpeg/test_4.jpg";
+    /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
     if (file == NULL) {fatal_error("Cannot find or open file.");}
 
@@ -182,28 +207,35 @@ int main(int argc, char* argv[]) {
     const size_t FILE_SIZE = get_file_size(file);
 
 
-    defined as double for easier calculations 
+    /* defined as double for easier calculations */
     double header_len = COMPLETION_PCT_LEN + SPACE_LEN + int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
     double payload_len = MAX_LINE_LEN - header_len;
     
-    double unit_groups_per_line = floor((payload_len - NEW_LINE_LEN)/UNIT_GROUP_LEN);
-    double unit_per_line = floor(unit_groups_per_line*UNIT_GROUP_SIZE);
+    double unit_groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
+    double units_per_line = floor(unit_groups_per_line*data_unit.group_size);
 
-    size_t lines = (size_t)ceil((double)FILE_SIZE/unit_per_line);
+    size_t lines = (size_t)ceil((double)FILE_SIZE/units_per_line);
 
+    printf("\n");
+    printf("max=%d\n", MAX_LINE_LEN);
+    printf("header=%f\n", header_len);
+    printf("payload=%f\n", payload_len);
 
-
-
+    printf("units_per_line=%f\n", units_per_line);
+    printf("unit_group_per_line=%f\n", unit_groups_per_line);
+    printf("lines=%d\n", lines);
+    
+    /*
     set up stdout full buffering 
     void* stdout_buffer = NULL;
     setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
+    */
 
 
 
 
 
-    read and print content of file 
-    unsigned int hex; // has to be int to be able to check for EOF
+    size_t byte; // has to be int to be able to check for EOF
     for (size_t line = 0; line < lines; line++)
     {
         print_header(line, lines, hex_per_line);
@@ -221,8 +253,6 @@ int main(int argc, char* argv[]) {
         printf("\n");
     }
 
-
     fclose(file);
-    */
     return 0;   
 }
