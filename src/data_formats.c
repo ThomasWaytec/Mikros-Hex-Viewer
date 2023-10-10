@@ -37,7 +37,7 @@ data_format_t dec = {
 };
 
 void print_hex(unsigned int byte) {
-    printf("%0*X ", hex.raw_padding, hex);
+    printf("%0*X ", hex.raw_padding, byte);
 }
 
 void print_bin(unsigned int byte) {
