@@ -42,8 +42,9 @@ void print_hex(unsigned int byte) {
 
 void print_bin(unsigned int byte) {
     for (size_t i = bin.raw_padding - 1; i + 1; i--) {
-        printf("%d ", (byte & (1 << i)) > 0);
+        printf("%d", (byte & (1 << i)) > 0);
     }
+    print(" ");
 }
 
 void print_dec(unsigned int byte) {
