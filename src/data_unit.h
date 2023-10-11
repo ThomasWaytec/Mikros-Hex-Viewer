@@ -20,6 +20,8 @@ typedef struct data_unit {
     double group_size;              /* the number data units in one data unit group */
     double group_len;               /* how many characters a data unit group takes up in total */
 
+    char* group_sep;                /* a string which acts a separator between the data unit groups when printed */
+
 
 } data_unit_t;
 

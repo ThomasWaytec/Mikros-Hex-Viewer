@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #ifdef _WIN32
     #include <Windows.h>
@@ -122,8 +123,12 @@ void initialize_data_unit(data_unit_t* data_unit, const char CHOSEN_DATA_FORMATS
 
     }
 
+
+    /* assign group separator */
+    data_unit->group_sep = " ";
+    
     /* calculate group len */
-    data_unit->group_len = data_unit->len*data_unit->group_size + SPACE_LEN;
+    data_unit->group_len = data_unit->len*data_unit->group_size + strlen(data_unit->group_sep);
     
 
 
@@ -175,10 +180,9 @@ void print_header(size_t current_line, double lines, double units_per_line) {
 
 }
 
-
 int main(int argc, char* argv[]) {
 
-    const char SELECTED_DATA_FORMATS[] = {DECIMAL};
+    const char SELECTED_DATA_FORMATS[] = {HEXADECIMAL};
     const size_t SELECTED_DATA_FORMATS_LEN =  1;
 
 
@@ -241,18 +245,18 @@ int main(int argc, char* argv[]) {
 
 
     size_t byte; // has to be int to be able to check for EOF
-    for (size_t line = 0; line < lines; line++)
+    for (size_t line = 0; line < lines && byte != EOF; line++)
     {
         print_header(line, lines, units_per_line);
 
-        for (size_t _ = 0; _ < unit_groups_per_line; _++)
+        for (size_t i = 0; i < unit_groups_per_line && byte != EOF; i++)
         {
 
-            for (size_t _ = 0; _ < data_unit.group_size && (byte = fgetc(file)) != EOF; _++) 
-            {
+            for (size_t j = 0; j < data_unit.group_size && (byte = fgetc(file)) != EOF; j++) {
+               
                 print_data_unit(&data_unit, byte);
             }
-            printf(" ");
+            if (byte != EOF) {printf("%s", data_unit.group_sep);}
             
         }       
         printf("\n");
