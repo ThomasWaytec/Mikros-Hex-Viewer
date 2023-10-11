@@ -14,7 +14,7 @@ but they are intended to store whole numbers.
 typedef struct data_unit {
 
     char* data_formats;             /* the type of data formats the data unit is made up of */
-    const size_t data_formats_len;
+    size_t data_formats_len;
     double len;                     /* the sum of all the data formats' lengths in .data_formats */
 
     double group_size;              /* the number data units in one data unit group */
