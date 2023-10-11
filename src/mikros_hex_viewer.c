@@ -47,7 +47,6 @@ extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
 extern data_format_t hex;
 extern data_format_t dec;
-extern print_hex;
 
 void fatal_error(const char* message)
 {
@@ -69,13 +68,17 @@ size_t doube_len(double number) {
 
 }
 
+void initialize_data_unit(data_unit_t* data_unit, const char CHOSEN_DATA_FORMATS[], const size_t CHOSEN_DATA_FORMATS_LEN) {
 
-void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[]) {
-    for (size_t i = 0; i < DATA_FORMATS_LEN; i++)
+
+    data_unit->data_formats = calloc(CHOSEN_DATA_FORMATS_LEN, sizeof(char));
+    data_unit->data_formats_len = CHOSEN_DATA_FORMATS_LEN;
+    
+    for (size_t i = 0; i < CHOSEN_DATA_FORMATS_LEN; i++)
     {
 
         
-        switch (DATA_FORMATS[i])
+        switch (CHOSEN_DATA_FORMATS[i])
         {
 
             case HEXADECIMAL:
@@ -101,7 +104,7 @@ void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[]) {
     }
 
     /* determine the appropriate group size */
-    if (DATA_FORMATS_LEN > 1) {data_unit->group_size = 1;}
+    if (data_unit->data_formats_len > 1) {data_unit->group_size = 1;}
     else {
         if (data_unit->len <= 3)
         {
@@ -129,7 +132,7 @@ void initialize_data_unit(data_unit_t* data_unit, const char DATA_FORMATS[]) {
 void print_data_unit(data_unit_t* data_unit, size_t byte) {
 
     /* call the appropriate print function for the different data formats */
-    for (size_t i = 0; i < DATA_FORMATS_LEN; i++)
+    for (size_t i = 0; i < data_unit->data_formats_len; i++)
     {   
         switch (data_unit->data_formats[i]) {
 
@@ -160,23 +163,25 @@ const size_t get_file_size(FILE* file) {
     return FILE_SIZE;
 }
 
-void print_header(size_t current_line, double lines, double hex_per_line) {
+void print_header(size_t current_line, double lines, double units_per_line) {
         size_t completion_pct = (current_line + 1)/lines*100;
         size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
 
-        size_t hex_printed = hex_per_line*(double)current_line;
-        size_t hex_printed_padding = int_len(hex_per_line*lines);
+        size_t units_printed = units_per_line*(double)current_line;
+        size_t units_printed_padding = int_len(units_per_line*lines);
 
 
-        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, hex_printed_padding, hex_printed);
+        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, units_printed_padding, units_printed);
 
 }
 
 
 int main(int argc, char* argv[]) {
 
-    const char SELECTED_DATA_FORMATS[] = {BINARY, HEXADECIMAL};
-    const size_t SELECTED_DATA_FORMATS_LEN = 3;
+    const char SELECTED_DATA_FORMATS[] = {DECIMAL};
+    const size_t SELECTED_DATA_FORMATS_LEN =  1;
+
+
     
     data_unit_t data_unit;
     initialize_data_unit(&data_unit, SELECTED_DATA_FORMATS, SELECTED_DATA_FORMATS_LEN);
@@ -238,14 +243,14 @@ int main(int argc, char* argv[]) {
     size_t byte; // has to be int to be able to check for EOF
     for (size_t line = 0; line < lines; line++)
     {
-        print_header(line, lines, hex_per_line);
+        print_header(line, lines, units_per_line);
 
-        for (size_t _ = 0; _ < hex_groups_per_line; _++)
+        for (size_t _ = 0; _ < unit_groups_per_line; _++)
         {
 
-            for (size_t _ = 0; _ < HEX_GROUP_SIZE && (hex = fgetc(file)) != EOF; _++) 
+            for (size_t _ = 0; _ < data_unit.group_size && (byte = fgetc(file)) != EOF; _++) 
             {
-                printf("%0*X ", RAW_HEX_LEN, hex);
+                print_data_unit(&data_unit, byte);
             }
             printf(" ");
             
