@@ -69,17 +69,13 @@ size_t doube_len(double number) {
 
 }
 
-void initialize_data_unit(data_unit_t* data_unit, const char CHOSEN_DATA_FORMATS[], const size_t CHOSEN_DATA_FORMATS_LEN) {
+void initialize_data_unit(data_unit_t* data_unit) {
 
-
-    data_unit->data_formats = calloc(CHOSEN_DATA_FORMATS_LEN, sizeof(char));
-    data_unit->data_formats_len = CHOSEN_DATA_FORMATS_LEN;
     
-    for (size_t i = 0; i < CHOSEN_DATA_FORMATS_LEN; i++)
+    for (size_t i = 0; i < data_unit->data_formats_len; i++)
     {
 
-        
-        switch (CHOSEN_DATA_FORMATS[i])
+        switch (data_unit->data_formats[i])
         {
 
             case HEXADECIMAL:
@@ -194,38 +190,93 @@ void print_header(size_t current_line, double lines, double units_per_line) {
 
 int main(int argc, char* argv[]) {
 
-    const char SELECTED_DATA_FORMATS[] = {DECIMAL, BINARY, HEXADECIMAL};
-    const size_t SELECTED_DATA_FORMATS_LEN =  3;
 
+    size_t switch_args = 0;
+    size_t non_switch_args = 0;
+    char* FILEPATH;
+    char* arg;
 
-    
     data_unit_t data_unit;
-    initialize_data_unit(&data_unit, SELECTED_DATA_FORMATS, SELECTED_DATA_FORMATS_LEN);
-    printf("data_format[0]=%c\n", data_unit.data_formats[0]);
-    printf("data_unit.len=%f\n", data_unit.len);
-    printf("data_unit.group_size=%f\n", data_unit.group_size);
-    printf("data_unit.group_len=%f\n", data_unit.group_len);
+    data_unit.data_formats_len = 1;
+    data_unit.data_formats = calloc(data_unit.data_formats_len, sizeof(char));
+    data_unit.data_formats[0] = HEXADECIMAL;
 
+    /* parse coommand-line arguments */
+    for (size_t i = 1; i < argc; i++) {   
+        arg = argv[i];
+
+        
+        printf("arg=%s\n", arg);
+        if (arg[0] == '-' && strlen(arg) == 2)
+        {
+            printf("switch=%s\n", arg);
+            switch (arg[1]) {
+
+
+                case HEXADECIMAL:
+                    data_unit.data_formats[switch_args++] = HEXADECIMAL;
+                    if (switch_args > 1) {
+                        data_unit.data_formats_len++;
+                        data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len-1)*sizeof(char));
+                    }
+                    
+                    break;
+
+                
+                case BINARY:        
+                    data_unit.data_formats[switch_args++] = BINARY;
+                    if (switch_args > 1) {
+                        data_unit.data_formats_len++;
+                        data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len-1)*sizeof(char));
+                    }
+
+                    break;
+
+                case DECIMAL:
+                    data_unit.data_formats[switch_args++] = DECIMAL;
+                    if (switch_args > 1) {
+                        data_unit.data_formats_len++;
+                        data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len-1)*sizeof(char));
+                    }
+
+                    break;
+
+                default:
+                    fatal_error("Unkown argument.");
+                    break;
+            }
+
+        }
+        else {
+            if (non_switch_args == 0)
+            {
+                FILEPATH = argv[1];
+                non_switch_args++;
+            }
+            else {
+                fatal_error("Too many non-switch arguments.");
+            }
+            
+            
+        }
+        
+    }
+    if (!non_switch_args) {fatal_error("No file argument given.");}
     
-
     /*
-    validate coommand-line arguments count
     if ((argc - 1) != 1) {
         char* argc_buffer = calloc(sizeof(char), 54 + int_len(argc) + 1);
         sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
         fatal_error(argc_buffer);
     }
-    const char* FILEPATH = argv[1];
     */
+    
 
-    const char FILEPATH[] = "test_files/jpeg/test_1.jpg";
-    /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
-    if (file == NULL) {fatal_error("Cannot find or open file.");}
-
-
-
+    if (file == NULL) {fatal_error("File not found or doesn't exist.");}
     const size_t FILE_SIZE = get_file_size(file);
+
+    initialize_data_unit(&data_unit);
 
 
     /* defined as double for easier calculations */
@@ -236,6 +287,12 @@ int main(int argc, char* argv[]) {
     double units_per_line = floor(unit_groups_per_line*data_unit.group_size);
 
     size_t lines = (size_t)ceil((double)FILE_SIZE/units_per_line);
+
+
+    /* debug dataunit */
+    printf("data_format[0]=%c\n", data_unit.data_formats[0]);
+    printf("data_format_len=%d\n", data_unit.data_formats_len);
+    printf("len=%f\n", data_unit.len);
 
     printf("\n");
     printf("max=%d\n", MAX_LINE_LEN);
