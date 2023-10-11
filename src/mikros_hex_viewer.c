@@ -124,8 +124,20 @@ void initialize_data_unit(data_unit_t* data_unit, const char CHOSEN_DATA_FORMATS
     }
 
 
-    /* assign group separator */
-    data_unit->group_sep = " ";
+    /* determine group separator */
+    if (data_unit->data_formats_len == 1)
+    {
+        data_unit->group_sep = " ";
+    }
+    
+    else {
+        if (data_unit->len < 10) {
+            data_unit->group_sep = " | ";
+        }
+        else {
+            data_unit->group_sep = " ";
+        }
+    }
     
     /* calculate group len */
     data_unit->group_len = data_unit->len*data_unit->group_size + strlen(data_unit->group_sep);
@@ -182,8 +194,8 @@ void print_header(size_t current_line, double lines, double units_per_line) {
 
 int main(int argc, char* argv[]) {
 
-    const char SELECTED_DATA_FORMATS[] = {HEXADECIMAL};
-    const size_t SELECTED_DATA_FORMATS_LEN =  1;
+    const char SELECTED_DATA_FORMATS[] = {DECIMAL, BINARY, HEXADECIMAL};
+    const size_t SELECTED_DATA_FORMATS_LEN =  3;
 
 
     
@@ -206,7 +218,7 @@ int main(int argc, char* argv[]) {
     const char* FILEPATH = argv[1];
     */
 
-    const char FILEPATH[] = "test_files/jpeg/test_4.jpg";
+    const char FILEPATH[] = "test_files/jpeg/test_1.jpg";
     /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
     if (file == NULL) {fatal_error("Cannot find or open file.");}
@@ -234,11 +246,11 @@ int main(int argc, char* argv[]) {
     printf("unit_group_per_line=%f\n", unit_groups_per_line);
     printf("lines=%d\n", lines);
     
-    /*
-    set up stdout full buffering 
+    
+    /* set up stdout full buffering */
     void* stdout_buffer = NULL;
     setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
-    */
+    
 
 
 
