@@ -23,9 +23,9 @@ typedef struct data_format
 } data_format_t;
 
 
-void print_hex(unsigned int byte);
-void print_bin(unsigned int byte);
-void print_dec(unsigned int byte);
+void print_hex(size_t byte);
+void print_bin(size_t byte);
+void print_dec(size_t byte);
 
 
 #endif
