@@ -35,6 +35,7 @@
 
 #include "char_len_constants.h"
 #include "datatype_len.h"
+#include "file.h"
 #include "data_formats.h"
 #include "data_unit.h"
 
@@ -113,16 +114,6 @@ void print_data_unit(data_unit_t* data_unit, size_t byte) {
 }
     
 
-
-
-const size_t get_file_size(FILE* file) {
-
-    fseek(file, 0, SEEK_END);
-    const size_t FILE_SIZE = ftell(file);            
-    fseek(file, 0, SEEK_SET);
-
-    return FILE_SIZE;
-}
 
 void print_header(size_t current_line, double lines, double units_per_line) {
 
