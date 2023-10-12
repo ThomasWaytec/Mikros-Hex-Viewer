@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "char_lengths.h"
+#include "char_len_constants.h"
 #include "data_formats.h"
 
 const char SUPPORTED_DATA_FORMATS[] = {HEXADECIMAL, BINARY, DECIMAL};

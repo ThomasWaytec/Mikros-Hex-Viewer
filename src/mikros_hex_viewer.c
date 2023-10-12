@@ -33,17 +33,12 @@
     }
 #endif
 
+#include "char_len_constants.h"
 #include "data_formats.h"
 #include "data_unit.h"
 
 
 #define MAX_LINE_LEN get_terminal_width()
-
-/* The macros are defined as double to facilitate calculations,
-but they are intended to store whole numbers. */
-#define SPACE_LEN 1.0
-#define NEW_LINE_LEN 1.0
-#define VERTICAL_LINE_LEN 1.0
 
 /* from data_formats.c */
 extern char SUPPORTED_DATA_FORMATS[];
