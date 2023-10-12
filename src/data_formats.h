@@ -1,7 +1,6 @@
 #ifndef DATA_FORMATS_H
 #define DATA_FORMATS_H
 
-#include <stdlib.h>
 
 #define HEXADECIMAL 'h'
 #define BINARY 'b'

@@ -34,6 +34,7 @@
 #endif
 
 #include "char_len_constants.h"
+#include "datatype_len.h"
 #include "data_formats.h"
 #include "data_unit.h"
 
