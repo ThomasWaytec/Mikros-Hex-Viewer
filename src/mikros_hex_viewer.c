@@ -52,20 +52,6 @@ void fatal_error(const char* message)
     exit(EXIT_FAILURE);
 }
 
-size_t size_t_len(size_t number) {
-    if (number == 0) {return 1;}
-
-    return floor(log10(abs(number))) + 1;
-}
-
-size_t double_len(double number) {
-    if (number == 0) {return 1;}
-
-    return floor(log10(abs(number))) + 1;
-
-
-}
-
 void initialize_data_unit(data_unit_t* data_unit) {
 
     
@@ -140,7 +126,7 @@ const size_t get_file_size(FILE* file) {
 void print_header(size_t current_line, double lines, double units_per_line) {
 
         size_t units_printed = units_per_line*(double)current_line;
-        size_t units_printed_padding = int_len(units_per_line*lines);
+        size_t units_printed_padding = size_t_len(units_per_line*lines);
 
 
         printf("%0*u| ", units_printed_padding, units_printed);
@@ -224,7 +210,7 @@ int main(int argc, char* argv[]) {
     
     /*
     if ((argc - 1) != 1) {
-        char* argc_buffer = calloc(sizeof(char), 54 + int_len(argc) + 1);
+        char* argc_buffer = calloc(sizeof(char), 54 + size_t_len(argc) + 1);
         sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
         fatal_error(argc_buffer);
     }
@@ -239,7 +225,7 @@ int main(int argc, char* argv[]) {
 
 
     /* defined as double for easier calculations */
-    double header_len = int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
+    double header_len = size_t_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
     double payload_len = MAX_LINE_LEN - header_len;
     
     double unit_groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
