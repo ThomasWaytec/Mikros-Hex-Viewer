@@ -40,10 +40,6 @@
 
 #define MAX_LINE_LEN get_terminal_width()
 
-#define PCT_SIGN_LEN 1.0   /* PCT = PERCENTAGE */
-#define COMPLETION_PCT_LEN (3.0 + PCT_SIGN_LEN)
-
-
 /* from data_formats.c */
 extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
@@ -178,14 +174,12 @@ const size_t get_file_size(FILE* file) {
 }
 
 void print_header(size_t current_line, double lines, double units_per_line) {
-        size_t completion_pct = (current_line + 1)/lines*100;
-        size_t completion_pct_padding = COMPLETION_PCT_LEN - PCT_SIGN_LEN;
 
         size_t units_printed = units_per_line*(double)current_line;
         size_t units_printed_padding = int_len(units_per_line*lines);
 
 
-        printf("%0*u%% %0*u| ", completion_pct_padding, completion_pct, units_printed_padding, units_printed);
+        printf("%0*u| ", units_printed_padding, units_printed);
 
 }
 
@@ -281,7 +275,7 @@ int main(int argc, char* argv[]) {
 
 
     /* defined as double for easier calculations */
-    double header_len = COMPLETION_PCT_LEN + SPACE_LEN + int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
+    double header_len = int_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
     double payload_len = MAX_LINE_LEN - header_len;
     
     double unit_groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
