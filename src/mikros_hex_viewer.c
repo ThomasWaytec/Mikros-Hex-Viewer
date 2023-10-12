@@ -52,13 +52,13 @@ void fatal_error(const char* message)
     exit(EXIT_FAILURE);
 }
 
-size_t int_len(size_t number) {
+size_t size_t_len(size_t number) {
     if (number == 0) {return 1;}
 
     return floor(log10(abs(number))) + 1;
 }
 
-size_t doube_len(double number) {
+size_t double_len(double number) {
     if (number == 0) {return 1;}
 
     return floor(log10(abs(number))) + 1;
