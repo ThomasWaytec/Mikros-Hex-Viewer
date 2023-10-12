@@ -33,7 +33,6 @@
     }
 #endif
 
-#include "char_lengths.h"
 #include "data_formats.h"
 #include "data_unit.h"
 
