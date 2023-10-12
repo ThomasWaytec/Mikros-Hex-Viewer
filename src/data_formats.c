@@ -7,6 +7,12 @@
 const char SUPPORTED_DATA_FORMATS[] = {HEXADECIMAL, BINARY, DECIMAL};
 
 
+void print_hex(size_t byte);
+void print_bin(size_t byte);
+void print_dec(size_t byte);
+
+
+
 
 /* hexadecimal */
 data_format_t hex = {
