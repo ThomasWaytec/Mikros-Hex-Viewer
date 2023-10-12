@@ -71,30 +71,7 @@ void initialize_data_unit(data_unit_t* data_unit) {
     
     for (size_t i = 0; i < data_unit->data_formats_len; i++)
     {
-
-        switch (data_unit->data_formats[i])
-        {
-
-            case HEXADECIMAL:
-                data_unit->data_formats[i] = HEXADECIMAL;
-                data_unit->len += hex.len;
-                break;
-
-            
-            case BINARY:        
-                data_unit->data_formats[i] = BINARY;
-                data_unit->len += bin.len;
-                break;
-
-            case DECIMAL:
-                data_unit->data_formats[i] = DECIMAL;
-                data_unit->len += dec.len;
-                break;
-
-            default:
-                break;
-        }
-
+        data_unit->len += data_unit->data_formats[i].len;
     }
 
     /* determine the appropriate group size */
@@ -141,28 +118,15 @@ void initialize_data_unit(data_unit_t* data_unit) {
     
 void print_data_unit(data_unit_t* data_unit, size_t byte) {
 
-    /* call the appropriate print function for the different data formats */
+    /* call the print function for all the data formats */
     for (size_t i = 0; i < data_unit->data_formats_len; i++)
-    {   
-        switch (data_unit->data_formats[i]) {
-
-            case HEXADECIMAL:
-                print_hex(byte);
-                break;
-
-                
-            case BINARY:
-                print_bin(byte);
-                break;
-
-            case DECIMAL:
-                print_dec(byte);
-                break;
-        }
-   }
+    {
+        data_unit->data_formats[i].print(byte);   
+    }
+}
     
 
-}
+
 
 const size_t get_file_size(FILE* file) {
 
@@ -193,8 +157,8 @@ int main(int argc, char* argv[]) {
 
     data_unit_t data_unit;
     data_unit.data_formats_len = 1;
-    data_unit.data_formats = calloc(data_unit.data_formats_len, sizeof(char));
-    data_unit.data_formats[0] = HEXADECIMAL;
+    data_unit.data_formats = calloc(data_unit.data_formats_len, sizeof(data_format_t)+9999);
+    data_unit.data_formats[0] = hex;
 
     /* parse coommand-line arguments */
     for (size_t i = 1; i < argc; i++) {   
@@ -208,29 +172,30 @@ int main(int argc, char* argv[]) {
 
 
                 case HEXADECIMAL:
-                    data_unit.data_formats[switch_args++] = HEXADECIMAL;
+                    printf("%s\n", arg);
+                    data_unit.data_formats[switch_args++] = hex;
                     if (switch_args > 1) {
                         data_unit.data_formats_len++;
-                        data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len-1)*sizeof(char));
+                        //data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len)*sizeof(data_format_t));
                     }
                     
                     break;
 
                 
                 case BINARY:        
-                    data_unit.data_formats[switch_args++] = BINARY;
+                    data_unit.data_formats[switch_args++] = bin;
                     if (switch_args > 1) {
                         data_unit.data_formats_len++;
-                        data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len-1)*sizeof(char));
+                        //data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len)*sizeof(data_format_t));
                     }
 
                     break;
 
                 case DECIMAL:
-                    data_unit.data_formats[switch_args++] = DECIMAL;
+                    data_unit.data_formats[switch_args++] = dec;
                     if (switch_args > 1) {
                         data_unit.data_formats_len++;
-                        data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len-1)*sizeof(char));
+                        //data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len)*sizeof(data_format_t));
                     }
 
                     break;
@@ -282,11 +247,6 @@ int main(int argc, char* argv[]) {
 
     size_t lines = (size_t)ceil((double)FILE_SIZE/units_per_line);
 
-    hex.print(255);
-    bin.print(255);
-    hex.print(0);
-    dec.print(255);
-    exit(0);
 
     /* debug dataunit */
     printf("data_format[0]=%c\n", data_unit.data_formats[0]);
