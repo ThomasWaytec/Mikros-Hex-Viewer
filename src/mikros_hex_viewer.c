@@ -33,9 +33,10 @@
     }
 #endif
 
+#include "file.h"
+#include "error.h"
 #include "char_len_constants.h"
 #include "datatype_len.h"
-#include "file.h"
 #include "data_formats.h"
 #include "data_unit.h"
 
@@ -47,12 +48,6 @@ extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
 extern data_format_t hex;
 extern data_format_t dec;
-
-void fatal_error(const char* message)
-{
-    fprintf(stderr,"\nError: %s\n", message);
-    exit(EXIT_FAILURE);
-}
 
 void initialize_data_unit(data_unit_t* data_unit) {
 
