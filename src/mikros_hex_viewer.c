@@ -201,7 +201,6 @@ int main(int argc, char* argv[]) {
         arg = argv[i];
 
         
-        printf("arg=%s\n", arg);
         if (arg[0] == '-' && strlen(arg) == 2)
         {
             printf("switch=%s\n", arg);
@@ -283,6 +282,11 @@ int main(int argc, char* argv[]) {
 
     size_t lines = (size_t)ceil((double)FILE_SIZE/units_per_line);
 
+    hex.print(255);
+    bin.print(255);
+    hex.print(0);
+    dec.print(255);
+    exit(0);
 
     /* debug dataunit */
     printf("data_format[0]=%c\n", data_unit.data_formats[0]);

@@ -6,6 +6,8 @@
 
 const char SUPPORTED_DATA_FORMATS[] = {HEXADECIMAL, BINARY, DECIMAL};
 
+
+
 /* hexadecimal */
 data_format_t hex = {
     .raw_len = 2,
@@ -13,8 +15,16 @@ data_format_t hex = {
 
     .len = 2.0 + SPACE_LEN,             /* .raw_len + SPACE_LEN */
     .group_size = 4.0,
-    .group_len = 3.0*4.0 + SPACE_LEN    /* .len*.group_size + SPACE_LEN */ 
+    .group_len = 3.0*4.0 + SPACE_LEN,   /* .len*.group_size + SPACE_LEN */
+    .print = print_hex,
 };
+
+void print_hex(size_t byte) {
+    printf("%0*X ", hex.raw_padding, byte);
+}
+
+
+
 
 /* binary */
 data_format_t bin = {
@@ -23,8 +33,19 @@ data_format_t bin = {
 
     .len = 8.0 + SPACE_LEN,             /* .raw_len + SPACE_LEN */
     .group_size = 1.0,
-    .group_len = 9.0*1.0 + SPACE_LEN    /* .len*.group_size + SPACE_LEN */ 
+    .group_len = 9.0*1.0 + SPACE_LEN,   /* .len*.group_size + SPACE_LEN */
+    .print = print_bin,
 };
+
+void print_bin(size_t byte) {
+    for (size_t i = bin.raw_padding - 1; i + 1; i--) {
+        printf("%d", (byte & (1 << i)) > 0);
+    }
+    printf(" ");
+}
+
+
+
 
 /* decimal */
 data_format_t dec = {
@@ -33,19 +54,9 @@ data_format_t dec = {
 
     .len = 3.0 + SPACE_LEN,             /* .raw_len + SPACE_LEN */
     .group_size = 3.0,
-    .group_len = 4.0*3.0 + SPACE_LEN    /* .len*.group_size + SPACE_LEN */ 
+    .group_len = 4.0*3.0 + SPACE_LEN,   /* .len*.group_size + SPACE_LEN */
+    .print = print_dec, 
 };
-
-void print_hex(size_t byte) {
-    printf("%0*X ", hex.raw_padding, byte);
-}
-
-void print_bin(size_t byte) {
-    for (size_t i = bin.raw_padding - 1; i + 1; i--) {
-        printf("%d", (byte & (1 << i)) > 0);
-    }
-    printf(" ");
-}
 
 void print_dec(size_t byte) {
     printf("%0*d ", dec.raw_padding, byte);
