@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <limits.h>
 
 #ifdef _WIN32
     #include <Windows.h>
