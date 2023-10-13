@@ -47,6 +47,7 @@ extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
 extern data_format_t hex;
 extern data_format_t dec;
+extern data_format_t DATA_FORMATS_MAP[];
 
 void initialize_data_unit(data_unit_t* data_unit) {
 
@@ -137,8 +138,7 @@ int main(int argc, char* argv[]) {
             if (strlen(arg) != 2) {fatal_error("Unknown argument: \"%s\"", arg);}
             
             /* if not a data format argument */
-            if (!strchr(SUPPORTED_DATA_FORMATS, arg[1])) {fatal_error("Unknown argument: \"%s\"", arg);}
-
+            if (!DATA_FORMATS_MAP[arg[1]].exist) {fatal_error("Unknown argument: \"%s\"", arg);}
             
             chosen_data_formats_len += 1;
             chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len);
