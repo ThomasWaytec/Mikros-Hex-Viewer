@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
             /* if not a one letter argument (i.e. -h) */   
             if (strlen(arg) != 2) {fatal_error("Unknown argument: \"%s\"", arg);}
             
-            /* if not a data format argument */
+            /* if not found among the data formats */
             if (!DATA_FORMATS_MAP[arg[1]].exist) {fatal_error("Unknown argument: \"%s\"", arg);}
             
             chosen_data_formats_len += 1;
