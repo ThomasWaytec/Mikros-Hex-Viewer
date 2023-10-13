@@ -43,7 +43,6 @@
 
 #define MAX_LINE_LEN get_terminal_width()
 
-/* from data_formats.c */
 extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
 extern data_format_t hex;
@@ -121,90 +120,68 @@ void print_header(size_t current_line, double lines, double units_per_line) {
 int main(int argc, char* argv[]) {
 
 
-    size_t switch_args = 0;
-    size_t non_switch_args = 0;
-    char* FILEPATH;
+
+    char* chosen_data_formats = NULL;
+    size_t chosen_data_formats_len = 0;
+
+    char* FILEPATH = NULL;
     char* arg;
-
-    data_unit_t data_unit;
-    data_unit.data_formats_len = 1;
-    data_unit.data_formats = calloc(data_unit.data_formats_len, sizeof(data_format_t)+9999);
-    data_unit.data_formats[0] = hex;
-
     /* parse coommand-line arguments */
     for (size_t i = 1; i < argc; i++) {   
         arg = argv[i];
 
         
-        if (arg[0] == '-' && strlen(arg) == 2)
-        {
-            printf("switch=%s\n", arg);
-            switch (arg[1]) {
+        if (arg[0] == '-')
+        {   
+            /* if not a one letter argument (i.e. -h) */   
+            if (strlen(arg) != 2) {fatal_error("Unknown argument: \"%s\"", arg);}
+            
+            /* if not a data format argument */
+            if (!strchr(SUPPORTED_DATA_FORMATS, arg[1])) {fatal_error("Unknown argument: \"%s\"", arg);}
 
+            
+            chosen_data_formats_len += 1;
+            chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len);
 
-                case HEXADECIMAL:
-                    printf("%s\n", arg);
-                    data_unit.data_formats[switch_args++] = hex;
-                    if (switch_args > 1) {
-                        data_unit.data_formats_len++;
-                        //data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len)*sizeof(data_format_t));
-                    }
-                    
-                    break;
-
+            chosen_data_formats[chosen_data_formats_len - 1] = arg[1];    
                 
-                case BINARY:        
-                    data_unit.data_formats[switch_args++] = bin;
-                    if (switch_args > 1) {
-                        data_unit.data_formats_len++;
-                        //data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len)*sizeof(data_format_t));
-                    }
-
-                    break;
-
-                case DECIMAL:
-                    data_unit.data_formats[switch_args++] = dec;
-                    if (switch_args > 1) {
-                        data_unit.data_formats_len++;
-                        //data_unit.data_formats = realloc(data_unit.data_formats, (data_unit.data_formats_len)*sizeof(data_format_t));
-                    }
-
-                    break;
-
-                default:
-                    fatal_error("Unkown argument.");
-                    break;
-            }
-
         }
-        else {
-            if (non_switch_args == 0)
-            {
-                FILEPATH = argv[1];
-                non_switch_args++;
-            }
-            else {
-                fatal_error("Too many non-switch arguments.");
-            }
-            
-            
-        }
+
         
+
+        /* if a non-switch argument */
+        else if (arg[0] != '-') {
+            /* more than one filepath arguments given */
+            if (FILEPATH != NULL) {fatal_error("Too many non-switch arguments: \"%s\" ...", arg);}
+
+            FILEPATH = arg;
+        }
     }
-    if (!non_switch_args) {fatal_error("No file argument given.");}
+
+    if (FILEPATH == NULL) {fatal_error("No file argument given.");}
     
-    /*
-    if ((argc - 1) != 1) {
-        char* argc_buffer = calloc(sizeof(char), 54 + size_t_len(argc) + 1);
-        sprintf(argc_buffer, "Program takes 1 command-line argument but %d were given.", argc - 1);
-        fatal_error(argc_buffer);
+    /* set default data format if none chosen */
+    if (chosen_data_formats == NULL) {
+        chosen_data_formats_len += 1;
+        chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len);
+
+        chosen_data_formats[chosen_data_formats_len - 1] = HEXADECIMAL;
     }
-    */
+
     
 
+
+    
+    /* try to open file */
     FILE* file = fopen(FILEPATH, "rb");
-    if (file == NULL) {fatal_error("File not found or doesn't exist.");}
+    if (file == NULL) {fatal_error("File not found or doesn't exist: \"%s\"", FILEPATH);}
     const size_t FILE_SIZE = get_file_size(file);
+
+
+
+    exit(0);
+
+    data_unit_t data_unit;
 
     initialize_data_unit(&data_unit);
 
