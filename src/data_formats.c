@@ -72,5 +72,4 @@ void print_dec(size_t byte) {
     printf("%0*d ", dec.raw_padding, byte);
 }
 
-const char SUPPORTED_DATA_FORMATS[] = {HEXADECIMAL, BINARY, DECIMAL};
 const data_format_t DATA_FORMATS_MAP[] = {[HEXADECIMAL] = hex, [BINARY] = bin, [DECIMAL] = dec};

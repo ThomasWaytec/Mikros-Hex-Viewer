@@ -43,7 +43,6 @@
 
 #define MAX_LINE_LEN get_terminal_width()
 
-extern char SUPPORTED_DATA_FORMATS[];
 extern data_format_t bin;
 extern data_format_t hex;
 extern data_format_t dec;
