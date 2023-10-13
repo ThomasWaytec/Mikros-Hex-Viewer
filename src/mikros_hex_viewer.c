@@ -33,8 +33,8 @@
     }
 #endif
 
-#include "file.h"
 #include "error.h"
+#include "file.h"
 #include "char_len_constants.h"
 #include "datatype_len.h"
 #include "data_formats.h"
@@ -108,8 +108,6 @@ void print_data_unit(data_unit_t* data_unit, size_t byte) {
     }
 }
     
-
-
 void print_header(size_t current_line, double lines, double units_per_line) {
 
         size_t units_printed = units_per_line*(double)current_line;
