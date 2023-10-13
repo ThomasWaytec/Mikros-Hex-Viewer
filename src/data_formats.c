@@ -67,3 +67,4 @@ data_format_t dec = {
 void print_dec(size_t byte) {
     printf("%0*d ", dec.raw_padding, byte);
 }
+
