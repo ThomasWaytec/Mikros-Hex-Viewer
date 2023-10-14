@@ -43,60 +43,11 @@
 
 #define MAX_LINE_LEN get_terminal_width()
 
-extern data_format_t bin;
-extern data_format_t hex;
-extern data_format_t dec;
+extern data_format_t BIN;
+extern data_format_t HEX;
+extern data_format_t DEC;
 extern data_format_t DATA_FORMATS_MAP[];
-
-void initialize_data_unit(data_unit_t* data_unit) {
-
     
-    for (size_t i = 0; i < data_unit->data_formats_len; i++)
-    {
-        data_unit->len += data_unit->data_formats[i].len;
-    }
-
-    /* determine the appropriate group size */
-    if (data_unit->data_formats_len > 1) {data_unit->group_size = 1;}
-    else {
-        if (data_unit->len <= 3)
-        {
-            data_unit->group_size = 4;
-        }
-        else if (data_unit->len == 4) {
-            data_unit->group_size = 3;
-        }
-        else if (data_unit->len > 4 && data_unit->len < 8) {
-            data_unit->group_size = 2;
-        }
-        else {
-            data_unit->group_size = 1;
-        }
-
-    }
-
-
-    /* determine group separator */
-    if (data_unit->data_formats_len == 1)
-    {
-        data_unit->group_sep = " ";
-    }
-    
-    else {
-        if (data_unit->len < 10) {
-            data_unit->group_sep = " | ";
-        }
-        else {
-            data_unit->group_sep = " ";
-        }
-    }
-    
-    /* calculate group len */
-    data_unit->group_len = data_unit->len*data_unit->group_size + strlen(data_unit->group_sep);
-    
-
-
-}
     
 void print_data_unit(data_unit_t* data_unit, size_t byte) {
 
@@ -121,7 +72,7 @@ int main(int argc, char* argv[]) {
 
 
 
-    char* chosen_data_formats = NULL;
+    data_format_t* chosen_data_formats = NULL;
     size_t chosen_data_formats_len = 0;
 
     char* FILEPATH = NULL;
@@ -140,9 +91,9 @@ int main(int argc, char* argv[]) {
             if (!DATA_FORMATS_MAP[arg[1]].exist) {fatal_error("Unknown argument: \"%s\"", arg);}
             
             chosen_data_formats_len += 1;
-            chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len);
+            chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len*sizeof(data_format_t));
 
-            chosen_data_formats[chosen_data_formats_len - 1] = arg[1];    
+            chosen_data_formats[chosen_data_formats_len - 1] = DATA_FORMATS_MAP[arg[1]];    
                 
         }
 
@@ -162,9 +113,9 @@ int main(int argc, char* argv[]) {
     /* set default data format if none chosen */
     if (chosen_data_formats == NULL) {
         chosen_data_formats_len += 1;
-        chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len);
+        chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len*sizeof(data_format_t));
 
-        chosen_data_formats[chosen_data_formats_len - 1] = HEXADECIMAL;
+        chosen_data_formats[chosen_data_formats_len - 1] = HEX;
     }
 
     
@@ -178,11 +129,44 @@ int main(int argc, char* argv[]) {
 
 
 
-    exit(0);
 
     data_unit_t data_unit;
+    
+    /* .data_formats */
+    /* .len */   
+    data_unit.data_formats = malloc(0);
+    data_unit.data_formats_len = 0;
+    for (size_t i = 0; i < chosen_data_formats_len; i++)
+    {
+        data_unit.data_formats_len += 1;
+        data_unit.data_formats = realloc(data_unit.data_formats, data_unit.data_formats_len*sizeof(data_format_t));
 
-    initialize_data_unit(&data_unit);
+        data_unit.data_formats[i] = chosen_data_formats[i];
+        data_unit.len += chosen_data_formats[i].len;
+    }
+
+    /* .group_size */
+    if (data_unit.data_formats_len == 1) {
+        if      (data_unit.len > 0 && data_unit.len <= 3)   {data_unit.group_size = 4;}
+        else if (data_unit.len == 4)                        {data_unit.group_size = 3;}
+        else if (data_unit.len > 4 && data_unit.len < 8)    {data_unit.group_size = 2;}
+        else if (data_unit.len >= 8)                        {data_unit.group_size = 1;}
+    }
+    else if (data_unit.data_formats_len > 1) {data_unit.group_size = 1;}
+
+    
+
+
+    /* .group_sep */
+    data_unit.group_sep = " ";
+
+    /* .group len */
+    data_unit.group_len = data_unit.len*data_unit.group_size + strlen(data_unit.group_sep);
+    
+
+
+    
+
 
 
     /* defined as double for easier calculations */
