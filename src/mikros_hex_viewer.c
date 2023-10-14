@@ -127,11 +127,15 @@ int main(int argc, char* argv[]) {
     if (file == NULL) {fatal_error("File not found or doesn't exist: \"%s\"", FILEPATH);}
     const size_t FILE_SIZE = get_file_size(file);
 
+    double header_len = size_t_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
+    double payload_len = MAX_LINE_LEN - header_len;
 
 
 
+
+    /* configure data_unit */
     data_unit_t data_unit;
-    
+
     /* .data_formats */
     /* .len */   
     data_unit.data_formats = malloc(0);
@@ -154,8 +158,6 @@ int main(int argc, char* argv[]) {
     }
     else if (data_unit.data_formats_len > 1) {data_unit.group_size = 1;}
 
-    
-
 
     /* .group_sep */
     data_unit.group_sep = " ";
@@ -163,20 +165,16 @@ int main(int argc, char* argv[]) {
     /* .group len */
     data_unit.group_len = data_unit.len*data_unit.group_size + strlen(data_unit.group_sep);
     
+    /* .unit_groups_per_line */
+    data_unit.groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
+
+    /* .unit_per_line */
+    data_unit.per_line = floor(data_unit.groups_per_line*data_unit.group_size);
 
 
-    
 
 
-
-    /* defined as double for easier calculations */
-    double header_len = size_t_len(FILE_SIZE) + VERTICAL_LINE_LEN + SPACE_LEN;
-    double payload_len = MAX_LINE_LEN - header_len;
-    
-    double unit_groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
-    double units_per_line = floor(unit_groups_per_line*data_unit.group_size);
-
-    size_t lines = (size_t)ceil((double)FILE_SIZE/units_per_line);
+    size_t lines = (size_t)ceil((double)FILE_SIZE/data_unit.per_line);
 
 
     /* debug dataunit */
@@ -189,8 +187,8 @@ int main(int argc, char* argv[]) {
     printf("header=%f\n", header_len);
     printf("payload=%f\n", payload_len);
 
-    printf("units_per_line=%f\n", units_per_line);
-    printf("unit_group_per_line=%f\n", unit_groups_per_line);
+    printf("units_per_line=%f\n", data_unit.per_line);
+    printf("unit_group_per_line=%f\n", data_unit.groups_per_line);
     printf("lines=%d\n", lines);
     
     
@@ -206,9 +204,9 @@ int main(int argc, char* argv[]) {
     size_t byte; // has to be int to be able to check for EOF
     for (size_t line = 0; line < lines && byte != EOF; line++)
     {
-        print_header(line, lines, units_per_line);
+        print_header(line, lines, data_unit.per_line);
 
-        for (size_t i = 0; i < unit_groups_per_line && byte != EOF; i++)
+        for (size_t i = 0; i < data_unit.groups_per_line && byte != EOF; i++)
         {
 
             for (size_t j = 0; j < data_unit.group_size && (byte = fgetc(file)) != EOF; j++) {
