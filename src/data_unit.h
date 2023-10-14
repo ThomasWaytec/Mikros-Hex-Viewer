@@ -15,13 +15,15 @@ typedef struct data_unit {
 
     data_format_t* data_formats;    /* the data formats the data unit is made up of */
     size_t data_formats_len;        /* the length of .data_formats */
+    
     double len;                     /* the sum of all data_format.len in .data_formats */
 
     double group_size;              /* the number data units in one data unit group */
+    char* group_sep;                /* separator for data unit groups when printed consecutively */
     double group_len;               /* how many characters a data unit group takes up in total */
 
-    char* group_sep;                /* a string which acts aa a separator between the data unit groups
-                                    when they are printed continuously */
+    double groups_per_line;         /* number of data unit groups per line when printed */
+    double per_line;                /* number of data units per line when printed */
 
 
 } data_unit_t;
