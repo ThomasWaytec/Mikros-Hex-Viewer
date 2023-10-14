@@ -187,20 +187,6 @@ int main(int argc, char* argv[]) {
 
     size_t lines = (size_t)ceil((double)FILE_SIZE/data_unit.per_line);
 
-
-    /* debug dataunit */
-    printf("data_format[0]=%c\n", data_unit.data_formats[0]);
-    printf("data_format_len=%d\n", data_unit.data_formats_len);
-    printf("len=%f\n", data_unit.len);
-
-    printf("\n");
-    printf("max=%d\n", MAX_LINE_LEN);
-    printf("header=%f\n", header_len);
-    printf("payload=%f\n", payload_len);
-
-    printf("units_per_line=%f\n", data_unit.per_line);
-    printf("unit_group_per_line=%f\n", data_unit.groups_per_line);
-    printf("lines=%d\n", lines);
     
     
     /* set up stdout full buffering */
