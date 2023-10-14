@@ -66,6 +66,19 @@ void print_header(size_t bytes_printed, const size_t FILE_SIZE) {
 
 }
 
+void print_payload(data_unit_t* data_unit, FILE* file) {
+    size_t byte; /* has to be int to be able to check for EOF */
+
+    for (size_t group = 0; group < data_unit->groups_per_line; group++) {
+
+        for (size_t unit = 0; unit < data_unit->group_size && (byte = fgetc(file)) != EOF; unit++) {
+            print_data_unit(data_unit, byte);
+        }
+        if (byte != EOF) {printf("%s", data_unit->group_sep);}
+    }
+}
+
+
 int main(int argc, char* argv[]) {
 
 
@@ -197,26 +210,16 @@ int main(int argc, char* argv[]) {
 
 
 
-
     size_t bytes_printed = 0;
-    size_t byte; /* has to be int to be able to check for EOF */
-    for (size_t line = 0; line < lines && byte != EOF; line++)
+    for (size_t line = 0; line < lines; line++)
     {
         print_header(bytes_printed, FILE_SIZE);
-
-        for (size_t i = 0; i < data_unit.groups_per_line && byte != EOF; i++)
-        {
-
-            for (size_t j = 0; j < data_unit.group_size && (byte = fgetc(file)) != EOF; j++) {
-               
-                print_data_unit(&data_unit, byte);
-                bytes_printed += 1;
-            }
-            if (byte != EOF) {printf("%s", data_unit.group_sep);}
-            
-        }       
+        print_payload(&data_unit, file);
         printf("\n");
-    }
+
+        bytes_printed += data_unit.per_line;
+    }       
+    
 
     fclose(file);
     return 0;   
