@@ -165,10 +165,10 @@ int main(int argc, char* argv[]) {
     /* .group len */
     data_unit.group_len = data_unit.len*data_unit.group_size + strlen(data_unit.group_sep);
     
-    /* .unit_groups_per_line */
+    /* .groups_per_line */
     data_unit.groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
 
-    /* .unit_per_line */
+    /* .per_line */
     data_unit.per_line = floor(data_unit.groups_per_line*data_unit.group_size);
 
 
