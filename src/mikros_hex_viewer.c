@@ -58,13 +58,11 @@ void print_data_unit(data_unit_t* data_unit, size_t byte) {
     }
 }
     
-void print_header(size_t current_line, double lines, double units_per_line) {
+void print_header(size_t bytes_printed, const size_t FILE_SIZE) {
 
-        size_t units_printed = units_per_line*(double)current_line;
-        size_t units_printed_padding = size_t_len(units_per_line*lines);
+        size_t bytes_printed_padding = size_t_len(FILE_SIZE);
 
-
-        printf("%0*u| ", units_printed_padding, units_printed);
+        printf("%0*u| ", bytes_printed_padding, bytes_printed);
 
 }
 
@@ -200,11 +198,11 @@ int main(int argc, char* argv[]) {
 
 
 
-
-    size_t byte; // has to be int to be able to check for EOF
+    size_t bytes_printed = 0;
+    size_t byte; /* has to be int to be able to check for EOF */
     for (size_t line = 0; line < lines && byte != EOF; line++)
     {
-        print_header(line, lines, data_unit.per_line);
+        print_header(bytes_printed, FILE_SIZE);
 
         for (size_t i = 0; i < data_unit.groups_per_line && byte != EOF; i++)
         {
@@ -212,6 +210,7 @@ int main(int argc, char* argv[]) {
             for (size_t j = 0; j < data_unit.group_size && (byte = fgetc(file)) != EOF; j++) {
                
                 print_data_unit(&data_unit, byte);
+                bytes_printed += 1;
             }
             if (byte != EOF) {printf("%s", data_unit.group_sep);}
             
