@@ -1,6 +1,8 @@
 #ifndef DATA_UNIT_H
 #define DATA_UNIT_H
 
+#include "data_formats.h"
+
 /*
 A data unit (data_unit_t) is a composite of one or many data formats (data_format_t).
 It is a logical unit, an added layer of abstraction so the main file (mikros_hex_viewer.c)
