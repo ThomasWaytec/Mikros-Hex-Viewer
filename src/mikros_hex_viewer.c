@@ -144,6 +144,7 @@ int main(int argc, char* argv[]) {
 
 
 
+
     /* configure data_unit */
     data_unit_t data_unit;
 
@@ -183,16 +184,18 @@ int main(int argc, char* argv[]) {
     data_unit.per_line = floor(data_unit.groups_per_line*data_unit.group_size);
 
 
-
-
     size_t lines = (size_t)ceil((double)FILE_SIZE/data_unit.per_line);
 
-    
-    
+        
+
+
+
+
+
     /* set up stdout full buffering */
     void* stdout_buffer = NULL;
-    setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
-    
+    setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);    
+
 
 
 
