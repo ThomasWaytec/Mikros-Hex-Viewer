@@ -8,19 +8,20 @@ can work more easily with multiple data formats.
 */
 
 /* 
-The struct members are defined as double to facilitate calculations,
+Most struct members are defined as double to facilitate calculations,
 but they are intended to store whole numbers.
 */
 typedef struct data_unit {
 
     data_format_t* data_formats;    /* the data formats the data unit is made up of */
-    size_t data_formats_len;
-    double len;                     /* the sum of all the data formats' lengths in .data_formats */
+    size_t data_formats_len;        /* the length of .data_formats */
+    double len;                     /* the sum of all data_format.len in .data_formats */
 
     double group_size;              /* the number data units in one data unit group */
     double group_len;               /* how many characters a data unit group takes up in total */
 
-    char* group_sep;                /* a string which acts a separator between the data unit groups when printed */
+    char* group_sep;                /* a string which acts aa a separator between the data unit groups
+                                    when they are printed continuously */
 
 
 } data_unit_t;
