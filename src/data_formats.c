@@ -9,7 +9,7 @@
 void print_hex(size_t byte);
 void print_bin(size_t byte);
 void print_dec(size_t byte);
-
+void print_char(size_t byte);
 
 
 /* hexadecimal */
@@ -72,4 +72,32 @@ void print_dec(size_t byte) {
     printf("%0*d ", DEC.raw_padding, byte);
 }
 
-const data_format_t DATA_FORMATS_MAP[] = {[HEXADECIMAL] = HEX, [BINARY] = BIN, [DECIMAL] = DEC};
+
+
+
+/* char */
+const data_format_t CHAR = {
+    .raw_len = 1,
+    .raw_padding = 1,
+
+    .len = 1.0 + SPACE_LEN,             /* .raw_len + SPACE_LEN */
+    .group_size = 4.0,
+    .group_len = 2.0*4.0 + SPACE_LEN,   /* .len*.group_size + SPACE_LEN */
+    .print = print_char,
+
+    .exist = true,
+};
+
+void print_char(size_t byte) {
+    printf("%c ", CHAR.raw_padding, byte);
+}
+
+
+
+
+const data_format_t DATA_FORMATS_MAP[] = {
+    [HEXADECIMAL] = HEX, 
+    [BINARY] = BIN, 
+    [DECIMAL] = DEC,
+    [CHARACTER] = CHAR,
+};
