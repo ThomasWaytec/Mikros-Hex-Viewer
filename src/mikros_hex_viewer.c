@@ -46,6 +46,7 @@
 extern data_format_t BIN;
 extern data_format_t HEX;
 extern data_format_t DEC;
+extern data_format_t CHAR;
 extern data_format_t DATA_FORMATS_MAP[];
     
     
