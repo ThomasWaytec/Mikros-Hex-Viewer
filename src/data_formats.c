@@ -6,10 +6,10 @@
 #include "data_formats.h"
 
 
-void print_hex(size_t byte);
-void print_bin(size_t byte);
-void print_dec(size_t byte);
-void print_char(size_t byte);
+void print_df_hex(size_t byte);
+void print_df_bin(size_t byte);
+void print_df_dec(size_t byte);
+void print_df_char(size_t byte);
 
 
 /* hexadecimal */
