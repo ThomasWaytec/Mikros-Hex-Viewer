@@ -7,7 +7,7 @@
 #define HEXADECIMAL 'h'
 #define BINARY 'b'
 #define DECIMAL 'd'
-#define CHAR 'c'
+#define CHARACTER 'c'
 
 /* 
 Most struct members are defined as double to facilitate calculations,
