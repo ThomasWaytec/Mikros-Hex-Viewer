@@ -5,6 +5,15 @@
 #include "char_len_constants.h"
 #include "data_formats.h"
 
+#define LINE_FEED 10
+#define CARRIAGE_RETURN 13
+#define ESCAPE 27
+#define HORIZONTAL_TAB 9
+#define BEL 7
+#define BACKSPACE 8
+#define NULL_ZERO 0
+
+#define SPACE 32
 
 void print_df_hex(size_t byte);
 void print_df_bin(size_t byte);
@@ -89,8 +98,19 @@ const data_format_t DF_CHAR = {
 };
 
 void print_df_char(size_t byte) {
-    char c_byte = (char)byte; 
-    printf("%c ", DF_CHAR.raw_padding, c_byte);
+    
+    /* exclude characters with distinct behaviors
+    to maintain the desired output format */
+    if (byte == LINE_FEED
+     || byte == CARRIAGE_RETURN
+     || byte == ESCAPE
+     || byte == HORIZONTAL_TAB
+     || byte == NULL_ZERO
+     || byte == BEL
+     || byte == BACKSPACE
+    ) {byte = SPACE;}
+
+    printf("%0*c ", DF_CHAR.raw_padding, byte);
 }
 
 
@@ -102,3 +122,4 @@ const data_format_t DATA_FORMATS_MAP[] = {
     [DECIMAL] = DF_DEC,
     [CHARACTER] = DF_CHAR,
 };
+
