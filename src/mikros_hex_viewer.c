@@ -43,10 +43,10 @@
 
 #define MAX_LINE_LEN get_terminal_width()
 
-extern data_format_t BIN;
-extern data_format_t HEX;
-extern data_format_t DEC;
-extern data_format_t CHAR;
+extern data_format_t DF_BIN;
+extern data_format_t DF_HEX;
+extern data_format_t DF_DEC;
+extern data_format_t DF_CHAR;
 extern data_format_t DATA_FORMATS_MAP[];
     
     
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
         chosen_data_formats_len += 1;
         chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len*sizeof(data_format_t));
 
-        chosen_data_formats[chosen_data_formats_len - 1] = HEX;
+        chosen_data_formats[chosen_data_formats_len - 1] = DF_HEX;
     }
 
     

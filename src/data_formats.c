@@ -13,7 +13,7 @@ void print_char(size_t byte);
 
 
 /* hexadecimal */
-const data_format_t HEX = {
+const data_format_t DF_HEX = {
     .raw_len = 2,
     .raw_padding = 2,
 
@@ -26,14 +26,14 @@ const data_format_t HEX = {
 };
 
 void print_hex(size_t byte) {
-    printf("%0*X ", HEX.raw_padding, byte);
+    printf("%0*X ", DF_HEX.raw_padding, byte);
 }
 
 
 
 
 /* binary */
-const data_format_t BIN = {
+const data_format_t DF_BIN = {
     .raw_len = 8,
     .raw_padding = 8,
 
@@ -46,7 +46,7 @@ const data_format_t BIN = {
 };
 
 void print_bin(size_t byte) {
-    for (size_t i = BIN.raw_padding - 1; i + 1; i--) {
+    for (size_t i = DF_BIN.raw_padding - 1; i + 1; i--) {
         printf("%d", (byte & (1 << i)) > 0);
     }
     printf(" ");
@@ -56,7 +56,7 @@ void print_bin(size_t byte) {
 
 
 /* decimal */
-const data_format_t DEC = {
+const data_format_t DF_DEC = {
     .raw_len = 3,
     .raw_padding = 3,
 
@@ -69,14 +69,14 @@ const data_format_t DEC = {
 };
 
 void print_dec(size_t byte) {
-    printf("%0*d ", DEC.raw_padding, byte);
+    printf("%0*d ", DF_DEC.raw_padding, byte);
 }
 
 
 
 
 /* char */
-const data_format_t CHAR = {
+const data_format_t DF_CHAR = {
     .raw_len = 1,
     .raw_padding = 1,
 
@@ -89,15 +89,15 @@ const data_format_t CHAR = {
 };
 
 void print_char(size_t byte) {
-    printf("%c ", CHAR.raw_padding, byte);
+    printf("%c ", DF_CHAR.raw_padding, byte);
 }
 
 
 
 
 const data_format_t DATA_FORMATS_MAP[] = {
-    [HEXADECIMAL] = HEX, 
-    [BINARY] = BIN, 
-    [DECIMAL] = DEC,
-    [CHARACTER] = CHAR,
+    [HEXADECIMAL] = DF_HEX, 
+    [BINARY] = DF_BIN, 
+    [DECIMAL] = DF_DEC,
+    [CHARACTER] = DF_CHAR,
 };
