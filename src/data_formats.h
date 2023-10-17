@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define HEXADECIMAL 'h'
+#define HEXADECIMAL 'x'
 #define BINARY 'b'
 #define DECIMAL 'd'
 #define CHARACTER 'c'
