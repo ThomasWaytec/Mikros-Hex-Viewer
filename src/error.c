@@ -18,3 +18,6 @@ void fatal_error(const char *format, ...)
     exit(EXIT_FAILURE);
 }
 
+void unknown_arg_error(char* arg) {
+    fatal_error("Unknown argument: \"%s\"", arg);
+}
