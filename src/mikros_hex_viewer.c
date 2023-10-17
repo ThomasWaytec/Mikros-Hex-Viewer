@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <math.h>
 #include <string.h>
 #include <limits.h>
@@ -88,19 +89,25 @@ int main(int argc, char* argv[]) {
     size_t chosen_data_formats_len = 0;
 
     char* FILEPATH = NULL;
+    bool buffering = false;
+
     char* arg;
+    size_t arg_len;
     /* parse coommand-line arguments */
     for (size_t i = 1; i < argc; i++) {   
         arg = argv[i];
-
+        arg_len = strlen(arg);
         
-        if (arg[0] == '-')
+        /* help message arguments */
+        if (arg == "-h" || arg == "--help") {} /* print help message and exit */
+
+
+        /* standalone data format arguments (i.e. -x, -b ...) */        
+        if (arg[0] == '-' && arg_len == 2)
         {   
-            /* if not a one letter argument (i.e. -h) */   
-            if (strlen(arg) != 2) {fatal_error("Unknown argument: \"%s\"", arg);}
-            
+
             /* if not found among the data formats */
-            if (!DATA_FORMATS_MAP[arg[1]].exist) {fatal_error("Unknown argument: \"%s\"", arg);}
+            if (!DATA_FORMATS_MAP[arg[1]].exist) {unknown_arg_error(arg);}
             
             chosen_data_formats_len += 1;
             chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len*sizeof(data_format_t));
@@ -109,15 +116,49 @@ int main(int argc, char* argv[]) {
                 
         }
 
-        
+        /* combined data format arguments (i.e. -bdxc, -xb ...) */                
+        else if (arg[0] == '-' && arg[1] !='-' && arg_len > 2) {
+            char arg_letter;
+            for (size_t i = 1; i < arg_len; i++) {
+                arg_letter = arg[i];
 
-        /* if a non-switch argument */
+                /* if not found among the data formats */
+                if (!DATA_FORMATS_MAP[arg_letter].exist)
+                {fatal_error("Invalid argument: \"%c\" found in \"%s\"", arg_letter, arg);}
+
+                chosen_data_formats_len += 1;
+                chosen_data_formats = realloc(chosen_data_formats, chosen_data_formats_len*sizeof(data_format_t));
+
+                chosen_data_formats[chosen_data_formats_len - 1] = DATA_FORMATS_MAP[arg_letter];    
+            }
+            
+
+
+
+        }
+
+        /* double dash arguments without input (i.e. --buffer) */
+        else if (arg[0] == '-' && arg[1] == '-'  && arg_len >= 2) {
+            
+            if (arg == "--buffer")
+            {
+                buffering = true;
+            }
+
+            else {unknown_arg_error(arg);}
+        }
+
+
+        /* non-switch (filepath) argument */
         else if (arg[0] != '-') {
             /* more than one filepath arguments given */
-            if (FILEPATH != NULL) {fatal_error("Too many non-switch arguments: \"%s\" ...", arg);}
+            if (FILEPATH != NULL) {fatal_error("Too many non-switch (filepath) arguments: \"%s\" ...", arg);}
 
             FILEPATH = arg;
         }
+
+        /* any other argument */
+        else {unknown_arg_error(arg);}
     }
 
     if (FILEPATH == NULL) {fatal_error("No file argument given.");}
@@ -193,9 +234,11 @@ int main(int argc, char* argv[]) {
 
 
 
-    /* set up stdout full buffering */
-    void* stdout_buffer = NULL;
-    setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);    
+    if (buffering) {
+        /* set up stdout full buffering */
+        void* stdout_buffer = NULL;
+        setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
+    }
 
 
 
