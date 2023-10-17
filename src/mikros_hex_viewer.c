@@ -99,7 +99,8 @@ int main(int argc, char* argv[]) {
         arg_len = strlen(arg);
         
         /* help message arguments */
-        if (arg == "-h" || arg == "--help") {} /* print help message and exit */
+        if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
+        {} /* print help message and exit */
 
 
         /* standalone data format arguments (i.e. -x, -b ...) */        
@@ -117,7 +118,7 @@ int main(int argc, char* argv[]) {
         }
 
         /* combined data format arguments (i.e. -bdxc, -xb ...) */                
-        else if (arg[0] == '-' && arg[1] !='-' && arg_len > 2) {
+        else if (arg[0] == '-' && arg[1] != '-' && arg_len > 2) {
             char arg_letter;
             for (size_t i = 1; i < arg_len; i++) {
                 arg_letter = arg[i];
@@ -140,7 +141,7 @@ int main(int argc, char* argv[]) {
         /* double dash arguments without input (i.e. --buffer) */
         else if (arg[0] == '-' && arg[1] == '-'  && arg_len >= 2) {
             
-            if (arg == "--buffer")
+            if (strcmp(arg, "--buffer") == 0)
             {
                 buffering = true;
             }
