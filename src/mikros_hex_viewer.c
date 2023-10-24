@@ -35,6 +35,7 @@
 #endif
 
 #include "error.h"
+#include "help.h"
 #include "file.h"
 #include "char_len_constants.h"
 #include "datatype_len.h"
@@ -100,7 +101,7 @@ int main(int argc, char* argv[]) {
         
         /* help message arguments */
         if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0)
-        {} /* print help message and exit */
+        {print_help_message(); exit(EXIT_SUCCESS);}
 
 
         /* standalone data format arguments (i.e. -x, -b ...) */        
@@ -162,7 +163,9 @@ int main(int argc, char* argv[]) {
         else {unknown_arg_error(arg);}
     }
 
-    if (FILEPATH == NULL) {fatal_error("No file argument given.");}
+    if (FILEPATH == NULL) {
+        fatal_error("No file argument given. Use --help or -h for help.");
+    }
     
     /* set default data format if none chosen */
     if (chosen_data_formats == NULL) {
