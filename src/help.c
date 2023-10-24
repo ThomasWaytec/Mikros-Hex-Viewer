@@ -27,3 +27,9 @@ void print_help_message(void) {
 
     printf("%s\n", help_message);
 }
+
+void print_usage(void) {
+    
+    const char* USAGE = "\n\nUsage: mikros FILE [OPTIONS]\nUse -h for help.";
+    printf("%s\n", USAGE);
+}

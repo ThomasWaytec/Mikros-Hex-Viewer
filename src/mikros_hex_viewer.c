@@ -164,7 +164,8 @@ int main(int argc, char* argv[]) {
     }
 
     if (FILEPATH == NULL) {
-        fatal_error("No file argument given. Use --help or -h for help.");
+        print_usage();
+        fatal_error("No file argument given.");
     }
     
     /* set default data format if none chosen */
