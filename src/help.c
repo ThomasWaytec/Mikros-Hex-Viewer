@@ -1,7 +1,8 @@
 #include <stdio.h>
 
-const char *help_message = "Usage: mikros FILE [OPTIONS]\n"
-    "View the hexadecimal representation of a file in the terminal.\n"
+const char *help_message = "View the hexadecimal representation of a file in the terminal.\n" 
+    "\n"
+    "Usage: mikros FILE [OPTIONS]\n"
     "\n"
     "Options:\n"
     "  -x               Display data in hexadecimal format (default).\n"
