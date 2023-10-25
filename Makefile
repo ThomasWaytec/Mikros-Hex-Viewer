@@ -1,7 +1,20 @@
-all: project_file.exe
+CC = gcc
+CFLAGS = -Wall -Werror
 
-project_file.exe: src/mikros_hex_viewer.c src/data_formats.c src/datatype_len.c src/file.c src/error.c src/help.c
-	gcc src/mikros_hex_viewer.c src/data_formats.c src/datatype_len.c src/file.c src/error.c src/help.c -o project_file.exe -lm
+SRC_DIR = src
+SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+OBJ_DIR = obj
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
+
+TARGET = mikros
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ_FILES)
+	$(CC) $(CFLAGS) -o $@ $^ 
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c -o $@ $< 
 
 clean:
-	rm project_file.exe
+	rm -f $(TARGET) $(OBJ_FILES)
