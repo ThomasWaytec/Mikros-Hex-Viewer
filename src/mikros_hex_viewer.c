@@ -51,7 +51,7 @@ extern data_format_t DF_DEC;
 extern data_format_t DF_CHAR;
 extern data_format_t DATA_FORMATS_MAP[];
     
-    
+
 void print_data_unit(data_unit_t* data_unit, size_t byte) {
 
     /* call the print function for all the data formats */
@@ -65,7 +65,7 @@ void print_header(size_t bytes_printed, const size_t FILE_SIZE) {
 
         size_t bytes_printed_padding = size_t_len(FILE_SIZE);
 
-        printf("%0*u| ", bytes_printed_padding, bytes_printed);
+        printf("%0*lu| ", bytes_printed_padding, bytes_printed);
 
 }
 
@@ -194,6 +194,7 @@ int main(int argc, char* argv[]) {
 
     /* configure data_unit */
     data_unit_t data_unit;
+    memset(&data_unit, 0, sizeof(data_unit_t)); /* initialize to zero */
 
     /* .data_formats */
     /* .len */   
@@ -210,10 +211,10 @@ int main(int argc, char* argv[]) {
 
     /* .group_size */
     if (data_unit.data_formats_len == 1) {
-        if      (data_unit.len > 0 && data_unit.len <= 3)   {data_unit.group_size = 4;}
-        else if (data_unit.len == 4)                        {data_unit.group_size = 3;}
-        else if (data_unit.len > 4 && data_unit.len < 8)    {data_unit.group_size = 2;}
-        else if (data_unit.len >= 8)                        {data_unit.group_size = 1;}
+        if      (data_unit.len > 0 && data_unit.len <= 3)   {data_unit.group_size = 4.0;}
+        else if (data_unit.len == 4)                        {data_unit.group_size = 3.0;}
+        else if (data_unit.len > 4 && data_unit.len < 8)    {data_unit.group_size = 2.0;}
+        else if (data_unit.len >= 8)                        {data_unit.group_size = 1.0;}
     }
     else if (data_unit.data_formats_len > 1) {data_unit.group_size = 1;}
 
@@ -222,7 +223,7 @@ int main(int argc, char* argv[]) {
     data_unit.group_sep = " ";
 
     /* .group len */
-    data_unit.group_len = data_unit.len*data_unit.group_size + strlen(data_unit.group_sep);
+    data_unit.group_len = data_unit.len*data_unit.group_size + (double)strlen(data_unit.group_sep);
     
     /* .groups_per_line */
     data_unit.groups_per_line = floor((payload_len - NEW_LINE_LEN)/data_unit.group_len);
@@ -245,12 +246,10 @@ int main(int argc, char* argv[]) {
         setvbuf(stdout, stdout_buffer, _IOFBF, INT_MAX);
     }
 
-
-
-
+    
     size_t bytes_printed = 0;
     for (size_t line = 0; line < lines; line++)
-    {
+    {  
         print_header(bytes_printed, FILE_SIZE);
         print_payload(&data_unit, file);
         printf("\n");
