@@ -24,7 +24,8 @@ Add any optional arguments after.
  - ```-x``` for hexadecimal (default)
  - ```-d``` for decimal
  - ```-b``` for binary
- - ```-c``` for character  
+ - ```-c``` for character
+ 
 You may use more than one format at once.  
 The arguments can also be combined: ```-xdbc```
 ### Examples:
