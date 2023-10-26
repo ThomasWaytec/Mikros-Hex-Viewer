@@ -18,12 +18,8 @@ make
 ```
 
 ## Usage
-Type in ```./mikros``` followed by the name of the file you'd like analyze.  
+Type in ```./mikros``` followed by the name of the file you'd like to analyze.  
 Add any optional arguments after.
-### Example: 
- ``` shell
-./mikros README.md
-```
 ### Output Format:
  - ```-x``` for hexadecimal (default)
  - ```-d``` for decimal
@@ -33,6 +29,7 @@ You may use more than one format at once.
 The arguments can also be combined: ```-xdbc```
 ### Examples:
 ``` shell
+./mikros username.txt
 ./mikros file.bin -b
 ./mikros images/photo.jpg -hxb
 ./mikros README.md -hc
