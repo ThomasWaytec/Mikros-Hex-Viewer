@@ -1,6 +1,6 @@
 # Mikros-Hex-Viewer
 
-View and analyze files in various formats (hexadecimal, binary, decimal, and character) at once with this small command-line hex viewer.
+Experience versatile file analysis with this compact command-line hex viewer, allowing you to inspect files in multiple formats (at once), including hexadecimal, binary, decimal, and character representations.
 
 ![Mikros in action](readme-assets/showcase.png)
 
@@ -25,7 +25,7 @@ Add any optional arguments after.
  - ```-d``` for decimal
  - ```-b``` for binary
  - ```-c``` for character
- 
+
 You may use more than one format at once.  
 The arguments can also be combined: ```-xdbc```
 ### Examples:
