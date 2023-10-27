@@ -32,7 +32,7 @@ The arguments can also be combined: ```-xdbc```
 ``` shell
 ./mikros username.txt
 ./mikros file.bin -b
-./mikros images/photo.jpg -hxb
-./mikros README.md -hc
+./mikros images/photo.jpg -d -b
+./mikros README.md -xbdc
 ```
 Enhance your usage of Mikros-Hex-Viewer by adding its folder path to your Bash or PowerShell path environment variable. This will enable you to conveniently use mikros from any location in your command-line.
