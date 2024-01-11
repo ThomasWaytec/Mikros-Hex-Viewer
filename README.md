@@ -20,7 +20,7 @@ make
 ## Usage
 Type in ```./mikros``` followed by the name of the file you'd like to analyze.  
 Add any optional arguments after.
-### Output Format:
+### Output Format Arguments:
  - ```-x``` for hexadecimal (default)
  - ```-d``` for decimal
  - ```-b``` for binary
