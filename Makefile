@@ -20,9 +20,12 @@ all: $(TARGET)
 $(TARGET): $(OBJ_FILES)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c -o $@ $< $(LDFLAGS)
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
 clean:
 	$(CLEAN_CMD) $(OBJ_DIR)/*
-	$(CLEAN_CMD) $(TARGET)*
+	$(CLEAN_CMD) $(TARGET)
