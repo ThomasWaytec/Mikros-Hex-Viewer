@@ -10,7 +10,7 @@ Experience versatile file analysis with this compact command-line hex viewer, al
 - gcc
 - make
 
-Clone the repository and run the makefile:
+Clone the repository and run the Makefile:
 ```shell
 git clone https://github.com/ThomasWaytec/Mikros-Hex-Viewer.git
 cd ./Mikros-Hex-Viewer
